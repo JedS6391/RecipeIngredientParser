@@ -28,7 +28,7 @@ namespace RecipeIngredientParser.Core.Tokens
     {
         public void Visit(UnitToken token)
         {
-            _parsedIngredient.Unit = token.Unit;
+            _parseResult.Ingredient.Unit = token.Unit;
         }
     }
     

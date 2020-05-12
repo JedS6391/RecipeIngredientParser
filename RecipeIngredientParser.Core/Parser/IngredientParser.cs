@@ -23,7 +23,7 @@ namespace RecipeIngredientParser.Core.Parser
             _templateMatchBehaviour = templateMatchBehaviour;
         }
         
-        public bool TryParseIngredient(string rawIngredient, out ParsedIngredient parsedIngredient)
+        public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
         {
             rawIngredient = NormalizeRawIngredient(rawIngredient);
             var context = new ParserContext(rawIngredient);
@@ -32,6 +32,8 @@ namespace RecipeIngredientParser.Core.Parser
             
             foreach (var template in _templates)
             {
+                context.Reset();
+                
                 var result = template.TryReadTokens(context, out var tokens);
 
                 switch (result)
@@ -51,10 +53,11 @@ namespace RecipeIngredientParser.Core.Parser
                     
                     case TemplateMatchResult.FullMatch:
                         // Stop on the first full match
-                        parsedIngredient = new ParsedIngredient()
+                        parseResult = new ParseResult()
                         {
                             RawIngredient = rawIngredient,
-                            Metadata = new ParsedIngredient.ParseMetadata()
+                            Ingredient = new ParseResult.IngredientDetails(),
+                            Metadata = new ParseResult.ParseMetadata()
                             {
                                 Template = template,
                                 MatchResult = TemplateMatchResult.FullMatch,
@@ -64,7 +67,7 @@ namespace RecipeIngredientParser.Core.Parser
 
                         foreach (var token in tokens)
                         {
-                            token.Accept(new ParserTokenVisitor(parsedIngredient));
+                            token.Accept(new ParserTokenVisitor(parseResult));
                         }
 
                         return true;
@@ -82,12 +85,13 @@ namespace RecipeIngredientParser.Core.Parser
                     .OrderByDescending(m => m.Count())
                     .FirstOrDefault();
                 
-                parsedIngredient = new ParsedIngredient()
+                parseResult = new ParseResult()
                 {
                     RawIngredient = rawIngredient,
-                    Metadata = new ParsedIngredient.ParseMetadata()
+                    // TODO: Ingredient details
+                    Ingredient = new ParseResult.IngredientDetails(),
+                    Metadata = new ParseResult.ParseMetadata()
                     {
-                        // TODO:
                         Template = null,
                         MatchResult = TemplateMatchResult.PartialMatch,
                         Tokens =  bestMatch
@@ -97,7 +101,7 @@ namespace RecipeIngredientParser.Core.Parser
                 return true;
             }
 
-            parsedIngredient = null;
+            parseResult = null;
             
             return false;
         }

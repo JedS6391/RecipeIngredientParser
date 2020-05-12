@@ -40,13 +40,17 @@ namespace RecipeIngredientParser.Test
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParsedIngredient()
+                new ParseResult()
                 {
                     RawIngredient = "1 bag vegan sausages",
-                    Amount = "1",
-                    Form = null,
-                    Unit = "bag",
-                    Ingredient = "vegan sausages"
+                    Ingredient = new ParseResult.IngredientDetails()
+                    {
+                        Amount = "1",
+                        Form = null,
+                        Unit = "bag",
+                        Ingredient = "vegan sausages"
+                    },
+                    Metadata = new ParseResult.ParseMetadata()
                 }
             },
             new dynamic[]
@@ -67,13 +71,17 @@ namespace RecipeIngredientParser.Test
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParsedIngredient()
+                new ParseResult()
                 {
                     RawIngredient = "2 grams chocolate",
-                    Amount = "2",
-                    Form = null,
-                    Unit = "grams",
-                    Ingredient = "chocolate"
+                    Ingredient = new ParseResult.IngredientDetails()
+                    {
+                        Amount = "2",
+                        Form = null,
+                        Unit = "grams",
+                        Ingredient = "chocolate"
+                    },
+                    Metadata = new ParseResult.ParseMetadata()
                 }
             },
             new dynamic[]
@@ -94,13 +102,17 @@ namespace RecipeIngredientParser.Test
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParsedIngredient()
+                new ParseResult()
                 {
                     RawIngredient = "cheese: 3 cups",
-                    Amount = "3",
-                    Form = null,
-                    Unit = "cups",
-                    Ingredient = "cheese"
+                    Ingredient = new ParseResult.IngredientDetails()
+                    {
+                        Amount = "3",
+                        Form = null,
+                        Unit = "cups",
+                        Ingredient = "cheese"
+                    },
+                    Metadata = new ParseResult.ParseMetadata()
                 }
             }
         };
@@ -111,7 +123,7 @@ namespace RecipeIngredientParser.Test
             string templateDefinition,
             string rawIngredient,
             Type[] expectedTokens,
-            ParsedIngredient expectedParsedIngredient)
+            ParseResult expectedParsedResult)
         {
             var parser = IngredientParser.Builder
                 .New
@@ -119,12 +131,12 @@ namespace RecipeIngredientParser.Test
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
                 .Build();
 
-            var result = parser.TryParseIngredient(rawIngredient, out var parsedIngredient);
+            var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
             
             Assert.IsTrue(result);
-            Assert.AreEqual(TemplateMatchResult.FullMatch, parsedIngredient.Metadata.MatchResult);
+            Assert.AreEqual(TemplateMatchResult.FullMatch, parseResult.Metadata.MatchResult);
             
-            var tokenList = parsedIngredient.Metadata.Tokens.ToList();
+            var tokenList = parseResult.Metadata.Tokens.ToList();
             
             Assert.AreEqual(expectedTokens.Length, tokenList.Count);
 
@@ -134,11 +146,11 @@ namespace RecipeIngredientParser.Test
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedIngredient.RawIngredient, parsedIngredient.RawIngredient);
-            Assert.AreEqual(expectedParsedIngredient.Amount, parsedIngredient.Amount);
-            Assert.AreEqual(expectedParsedIngredient.Unit, parsedIngredient.Unit);
-            Assert.AreEqual(expectedParsedIngredient.Form, parsedIngredient.Form);
-            Assert.AreEqual(expectedParsedIngredient.Ingredient, parsedIngredient.Ingredient);
+            Assert.AreEqual(expectedParsedResult.RawIngredient, parseResult.RawIngredient);
+            Assert.AreEqual(expectedParsedResult.Ingredient.Amount, parseResult.Ingredient.Amount);
+            Assert.AreEqual(expectedParsedResult.Ingredient.Unit, parseResult.Ingredient.Unit);
+            Assert.AreEqual(expectedParsedResult.Ingredient.Form, parseResult.Ingredient.Form);
+            Assert.AreEqual(expectedParsedResult.Ingredient.Ingredient, parseResult.Ingredient.Ingredient);
         }
     }
 }

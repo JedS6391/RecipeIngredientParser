@@ -18,7 +18,7 @@ namespace RecipeIngredientParser.Core.Tokens
     {
         public void Visit(IngredientToken token)
         {
-            _parsedIngredient.Ingredient = token.Ingredient;
+            _parseResult.Ingredient.Ingredient = token.Ingredient;
         }
     }
     
