@@ -44,7 +44,7 @@ namespace RecipeIngredientParser.Core.Parser
             }
 
             throw new ParserOutOfBoundsException(
-                "Unable to read next character as all characters have been consumed.");
+        "Unable to read next character as all characters have been consumed.");
         } 
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace RecipeIngredientParser.Core.Parser
             if (!Matches(c => c == characterToConsume))
             {
                 throw new ParserConsumptionFailedException(
-                    $"Unable to consume character {characterToConsume} at current position.");
+            $"Unable to consume character {characterToConsume} at current position.");
             }
             
             _position++;

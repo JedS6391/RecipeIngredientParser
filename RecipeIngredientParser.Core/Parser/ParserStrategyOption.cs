@@ -1,9 +1,9 @@
 namespace RecipeIngredientParser.Core.Parser
 {
     /// <summary>
-    /// Defines the different parser template matching options.
+    /// Defines the different options for the parsing strategy.
     /// </summary>
-    public enum ParserTemplateMatchBehaviour
+    public enum ParserStrategyOption
     {
         /// <summary>
         /// Only full matches will be accepted - partial and non-matches will be discarded.

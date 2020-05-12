@@ -2,108 +2,60 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using RecipeIngredientParser.Core.Parser.Exceptions;
+using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
-using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Parser
 {
+    /// <summary>
+    /// Provides the ability to parse an ingredient based on a set of templates.
+    /// </summary>
     public class IngredientParser
     {
         private static readonly Regex WhitespaceRegex = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
 
         private readonly IEnumerable<Template> _templates;
-        private readonly ParserTemplateMatchBehaviour _templateMatchBehaviour;
+        private readonly ParserStrategyOption _strategyOption;
+        private readonly IParserStrategyFactory _parserStrategyFactory;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="IngredientParser"/> class.
+        /// </summary>
+        /// <param name="templates">The set of templates the parser will attempt parsing with.</param>
+        /// <param name="strategyOption">The strategy option to use for parsing.</param>
+        /// <param name="parserStrategyFactory">A factory for parsing strategies.</param>
         private IngredientParser(
             IEnumerable<Template> templates,
-            ParserTemplateMatchBehaviour templateMatchBehaviour)
+            ParserStrategyOption strategyOption,
+            IParserStrategyFactory parserStrategyFactory)
         {
             _templates = templates;
-            _templateMatchBehaviour = templateMatchBehaviour;
+            _strategyOption = strategyOption;
+            _parserStrategyFactory = parserStrategyFactory;
         }
         
+        /// <summary>
+        /// Attempts to parse a raw ingredient according to the configured templates and parsing strategy.
+        /// </summary>
+        /// <param name="rawIngredient">A raw ingredient string to parse (e.g. 1 bag vegan sausages).</param>
+        /// <param name="parseResult">
+        /// When this method returns, contains the result of parsing if the parse operation
+        /// succeeded, or <see langword="null"/> if the parse failed.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the parsing succeeded; <see langword="false"/> otherwise.
+        /// </returns>
         public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
         {
+            // TODO: Input validation.
             rawIngredient = NormalizeRawIngredient(rawIngredient);
             var context = new ParserContext(rawIngredient);
 
-            var partialMatches = new List<IEnumerable<IToken>>();
+            var parserStrategy = _parserStrategyFactory.GetStrategy(_strategyOption);
             
-            foreach (var template in _templates)
-            {
-                context.Reset();
-                
-                var result = template.TryReadTokens(context, out var tokens);
-
-                switch (result)
-                {
-                    case TemplateMatchResult.NoMatch:
-                        // Always skip non-matches
-                        continue;
-                    
-                    case TemplateMatchResult.PartialMatch:
-                        if (_templateMatchBehaviour == ParserTemplateMatchBehaviour.AcceptBestPartialMatch)
-                        {
-                            // Keep a track of the partial match in case we need to choose the best.
-                            partialMatches.Add(tokens);
-                        }
-
-                        continue;
-                    
-                    case TemplateMatchResult.FullMatch:
-                        // Stop on the first full match
-                        parseResult = new ParseResult()
-                        {
-                            RawIngredient = rawIngredient,
-                            Ingredient = new ParseResult.IngredientDetails(),
-                            Metadata = new ParseResult.ParseMetadata()
-                            {
-                                Template = template,
-                                MatchResult = TemplateMatchResult.FullMatch,
-                                Tokens =  tokens
-                            }
-                        };
-
-                        foreach (var token in tokens)
-                        {
-                            token.Accept(new ParserTokenVisitor(parseResult));
-                        }
-
-                        return true;
-                    
-                    default:
-                        // TODO
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            if (_templateMatchBehaviour == ParserTemplateMatchBehaviour.AcceptBestPartialMatch &&
-                partialMatches.Any())
-            {
-                var bestMatch = partialMatches
-                    .OrderByDescending(m => m.Count())
-                    .FirstOrDefault();
-                
-                parseResult = new ParseResult()
-                {
-                    RawIngredient = rawIngredient,
-                    // TODO: Ingredient details
-                    Ingredient = new ParseResult.IngredientDetails(),
-                    Metadata = new ParseResult.ParseMetadata()
-                    {
-                        Template = null,
-                        MatchResult = TemplateMatchResult.PartialMatch,
-                        Tokens =  bestMatch
-                    }
-                };
-
-                return true;
-            }
-
-            parseResult = null;
-            
-            return false;
+            return parserStrategy.TryParseIngredient(context, _templates, out parseResult);
         }
 
         private string NormalizeRawIngredient(string rawIngredient)
@@ -113,18 +65,40 @@ namespace RecipeIngredientParser.Core.Parser
                 .ToLower();
         }
 
+        #region Builder
+        
+        /// <summary>
+        /// Provides the ability to build a <see cref="IngredientParser"/> instance.
+        /// </summary>
         public class Builder
         {
             private string[] _templateDefinitions;
             private ITokenReaderFactory _tokenReaderFactory;
+            private IParserStrategyFactory _parserStrategyFactory;
 
-            private ParserTemplateMatchBehaviour _templateMatchBehaviour =
-                ParserTemplateMatchBehaviour.OnlyAcceptFullMatch;
+            private ParserStrategyOption _strategyOption =
+                ParserStrategyOption.OnlyAcceptFullMatch;
             
+            /// <summary>
+            /// Gets a new builder instance to start the construction process.
+            /// </summary>
             public static Builder New => new Builder();
 
-            public bool IsValid => _templateDefinitions != null && _tokenReaderFactory != null;
+            /// <summary>
+            /// Gets a value indicating whether the builder is in a valid state.
+            /// </summary>
+            public bool IsValid => 
+                _templateDefinitions != null && 
+                _tokenReaderFactory != null &&
+                _parserStrategyFactory != null;
             
+            /// <summary>
+            /// Configures the parser to use the specified template definitions
+            /// </summary>
+            /// <param name="templateDefinitions">
+            /// A collection of template definitions (e.g. {amount} {unit} {ingredient}).
+            /// </param>
+            /// <returns>A <see cref="Builder"/> instance with the template definitions configured.</returns>
             public Builder WithTemplateDefinitions(params string[] templateDefinitions)
             {
                 _templateDefinitions = templateDefinitions;
@@ -132,13 +106,30 @@ namespace RecipeIngredientParser.Core.Parser
                 return this;
             }
 
-            public Builder WithTemplateMatchBehaviour(ParserTemplateMatchBehaviour templateMatchBehaviour)
+            /// <summary>
+            /// Configures the parser to use the specified parsing strategy option.
+            /// </summary>
+            /// <remarks>
+            /// By default, <see cref="ParserStrategyOption.OnlyAcceptFullMatch"/> will be used
+            /// if not explicitly set during construction.
+            /// </remarks>
+            /// <param name="strategyOption">A parsing strategy option to use.</param>
+            /// <returns>A <see cref="Builder"/> instance with the parsing strategy option configured.</returns>
+            public Builder WithParserStrategy(ParserStrategyOption strategyOption)
             {
-                _templateMatchBehaviour = templateMatchBehaviour;
+                _strategyOption = strategyOption;
 
                 return this;
             }
 
+            /// <summary>
+            /// Configures the parser to use the specified <see cref="ITokenReaderFactory"/>.
+            /// </summary>
+            /// <remarks>
+            /// The token reader factory will be used when constructing the templates that the parser uses.
+            /// </remarks>
+            /// <param name="tokenReaderFactory">A <see cref="ITokenReaderFactory"/> instance.</param>
+            /// <returns>A <see cref="Builder"/> instance with the token reader factory configured.</returns>
             public Builder WithTokenReaderFactory(ITokenReaderFactory tokenReaderFactory)
             {
                 _tokenReaderFactory = tokenReaderFactory;
@@ -146,38 +137,61 @@ namespace RecipeIngredientParser.Core.Parser
                 return this;
             }
 
+            /// <summary>
+            /// Configures the parser to use the specified <see cref="IParserStrategyFactory"/>.
+            /// </summary>
+            /// <remarks>
+            /// The parser strategy factory will be used to get the correct parsing strategy based on
+            /// the configured <see cref="ParserStrategyOption"/>.
+            /// </remarks>
+            /// <param name="parserStrategyFactory">A <see cref="IParserStrategyFactory"/> instance.</param>
+            /// <returns>A <see cref="Builder"/> instance with the parser strategy factory configured.</returns>
+            public Builder WithParserStrategyFactory(IParserStrategyFactory parserStrategyFactory)
+            {
+                _parserStrategyFactory = parserStrategyFactory;
+
+                return this;
+            }
+
+            /// <summary>
+            /// Builds a <see cref="IngredientParser"/> instance based on the builders configuration.
+            /// </summary>
+            /// <returns>A <see cref="IngredientParser"/> instance.</returns>
+            /// <exception cref="ParserBuilderException">
+            /// When the builder is unable to build a <see cref="IngredientParser"/> in its current state.
+            /// </exception>
             public IngredientParser Build()
             {
                 if (!IsValid)
                 {
-                    // TODO: Exception type
-                    throw new Exception();
+                    throw new ParserBuilderException("Unable to build parser in current state.");
                 }
                 
                 var templates = BuildTemplates();
 
-                return new IngredientParser(templates, _templateMatchBehaviour);
+                return new IngredientParser(
+                    templates, 
+                    _strategyOption,
+                    _parserStrategyFactory);
             }
 
             private IEnumerable<Template> BuildTemplates()
             {
-                var templates = new List<Template>();
-                
-                foreach (var definition in _templateDefinitions)
-                {
-                    var builder = Template
-                        .Builder
-                        .New
-                        .WithTemplateDefinition(definition)
-                        .WithTokenReaderFactory(_tokenReaderFactory);
+                return _templateDefinitions.Select(CreateTemplate);
+            }
 
-                    var template = builder.Build();
-                    
-                    templates.Add(template);
-                }
+            private Template CreateTemplate(string definition)
+            {
+                var builder = Template
+                    .Builder
+                    .New
+                    .WithTemplateDefinition(definition)
+                    .WithTokenReaderFactory(_tokenReaderFactory);
 
-                return templates;
+                return builder.Build();
             }
         }
+        
+        #endregion
     }
 }

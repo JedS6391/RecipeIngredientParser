@@ -21,7 +21,7 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             _tokenReaders = tokenReaders;
         }
         
-        /// <inheritdoc cref="ITokenReaderFactory"/>
+        /// <inheritdoc/>
         public ITokenReader GetTokenReader(string tokenType)
         {
             return _tokenReaders.FirstOrDefault(tr => tr.TokenType == tokenType);

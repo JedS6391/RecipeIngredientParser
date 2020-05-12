@@ -5,10 +5,29 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
 {
+    /// <summary>
+    /// A token reader responsible for the {amount} token type.
+    /// </summary>
     public class AmountTokenReader : ITokenReader
     {
+        /// <inheritdoc/>
         public string TokenType { get; } = "{amount}";
 
+        /// <inheritdoc/>
+        /// <remarks>
+        /// There are multiple amount tokens supported:
+        /// <list type="bullet">
+        ///     <item>
+        ///        <description><see cref="LiteralAmountToken"/> (e.g. 1, 42, etc)</description>
+        ///     </item>
+        ///     <item>
+        ///        <description><see cref="FractionalAmountToken"/> (e.g. 1/2, 3/4, etc)</description>
+        ///     </item>
+        ///     <item>
+        ///        <description><see cref="RangeAmountToken"/> (e.g. 1-2, 3-4, etc)</description>
+        ///     </item>
+        /// </list>
+        /// </remarks>
         public bool TryReadToken(ParserContext context, out IToken token)
         {
             var rawAmount = new StringBuilder();

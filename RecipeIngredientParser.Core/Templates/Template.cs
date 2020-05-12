@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Templates.Exceptions;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
@@ -91,15 +92,34 @@ namespace RecipeIngredientParser.Core.Templates
 
         #region Builder
 
+        /// <summary>
+        /// Provides the ability to build a <see cref="Template"/> instance.
+        /// </summary>
         public class Builder
         {
             private string _templateDefinition;
             private ITokenReaderFactory _tokenReaderFactory;
             
+            /// <summary>
+            /// Gets a new builder instance to start the construction process.
+            /// </summary>
             public static Builder New => new Builder();
             
-            public bool IsValid => _templateDefinition != null && _tokenReaderFactory != null;
+            /// <summary>
+            /// Gets a value indicating whether the builder is in a valid state.
+            /// </summary>
+            public bool IsValid => 
+                _templateDefinition != null && 
+                _tokenReaderFactory != null;
 
+            /// <summary>
+            /// Configures the template to use the specified template definition.
+            /// </summary>
+            /// <remarks>
+            /// The template definition provides instructions on how to tokenize an ingredient string.
+            /// </remarks>
+            /// <param name="templateDefinition">A definition for the template (e.g. {amount} {unit} {ingredient}).</param>
+            /// <returns>A <see cref="Builder"/> instance with the template definition configured.</returns>
             public Builder WithTemplateDefinition(string templateDefinition)
             {
                 _templateDefinition = templateDefinition;
@@ -107,6 +127,15 @@ namespace RecipeIngredientParser.Core.Templates
                 return this;
             }
 
+            /// <summary>
+            /// Configures the template to use the specified <see cref="ITokenReaderFactory"/>.
+            /// </summary>
+            /// <remarks>
+            /// The token reader factory will be used to create a set of <see cref="ITokenReader"/> instances
+            /// that adhere to the template definition provided.
+            /// </remarks>
+            /// <param name="tokenReaderFactory">A <see cref="ITokenReaderFactory"/> instance.</param>
+            /// <returns>A <see cref="Builder"/> instance with the token reader factory configured.</returns>
             public Builder WithTokenReaderFactory(ITokenReaderFactory tokenReaderFactory)
             {
                 _tokenReaderFactory = tokenReaderFactory;
@@ -114,12 +143,18 @@ namespace RecipeIngredientParser.Core.Templates
                 return this;
             }
             
+            /// <summary>
+            /// Builds a <see cref="Template"/> instance based on the builders configuration. 
+            /// </summary>
+            /// <returns>A <see cref="Template"/> instance.</returns>
+            /// <exception cref="TemplateBuilderException">
+            /// When the builder is unable to build a <see cref="Template"/> in its current state.
+            /// </exception>
             public Template Build()
             {
                 if (!IsValid)
                 {
-                    // TODO: Exception type
-                    throw new Exception();
+                    throw new TemplateBuilderException("Unable to build template in current state.");
                 }
                 
                 return new Template(_templateDefinition, _tokenReaderFactory);

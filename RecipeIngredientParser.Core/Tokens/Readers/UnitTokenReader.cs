@@ -6,9 +6,12 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
 {
+    /// <summary>
+    /// A token reader responsible for the {unit} token type.
+    /// </summary>
     public class UnitTokenReader : ITokenReader
     {
-        private static readonly Dictionary<string, UnitType> UnitMappings = new Dictionary<string, UnitType>
+        private static readonly Dictionary<string, UnitType> DefaultUnitMappings = new Dictionary<string, UnitType>
         {
             { "tsp", UnitType.Teaspoon },
             { "t.", UnitType.Teaspoon },
@@ -29,9 +32,32 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             { "g.", UnitType.Gram },
             { "g", UnitType.Gram }
         };
+
+        private readonly IDictionary<string, UnitType> _unitMappings;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="UnitTokenReader"/> class
+        /// that will use the default unit mappings.
+        /// </summary>
+        public UnitTokenReader()
+        {
+            _unitMappings = DefaultUnitMappings;
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="UnitTokenReader"/> class
+        /// that will use the supplied unit mappings.
+        /// </summary>
+        /// <param name="unitMappings">A lookup for raw unit values (e.g. grams) to a <see cref="UnitType"/>.</param>
+        public UnitTokenReader(IDictionary<string, UnitType> unitMappings)
+        {
+            _unitMappings = unitMappings;
+        }        
         
+        /// <inheritdoc/>
         public string TokenType => "{unit}";
 
+        /// <inheritdoc/>
         public bool TryReadToken(ParserContext context, out IToken token)
         {
             var rawUnit = new StringBuilder();
@@ -55,21 +81,22 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             {
                 return null;
             }
-            
-            if (UnitMappings.TryGetValue(rawUnit, out var unitType))
-            {
-                return new UnitToken()
-                {
-                    Unit = rawUnit,
-                    Type = unitType
-                };
-            }
 
             return new UnitToken()
             {
                 Unit = rawUnit,
-                Type = UnitType.Unknown
+                Type = GetUnitType(rawUnit)
             };
+        }
+
+        private UnitType GetUnitType(string rawUnit)
+        {
+            if (_unitMappings.TryGetValue(rawUnit, out var unitType))
+            {
+                return unitType;
+            }
+
+            return UnitType.Unknown;
         }
     }
 }

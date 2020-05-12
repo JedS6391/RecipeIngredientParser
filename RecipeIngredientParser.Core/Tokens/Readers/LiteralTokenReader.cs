@@ -4,15 +4,27 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
 {
-    public class LiteralTokenReader : ITokenReader
+    /// <summary>
+    /// A token reader responsible for reading a literal value.
+    /// </summary>
+    /// <remarks>
+    /// This class is meant for internal use only.
+    /// </remarks>
+    internal class LiteralTokenReader : ITokenReader
     {
+        /// <inheritdoc/>
         public string TokenType { get; }
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="LiteralTokenReader"/> class.
+        /// </summary>
+        /// <param name="value">The literal value to be read.</param>
         public LiteralTokenReader(string value)
         {
             TokenType = value;
         }
 
+        /// <inheritdoc/>
         public bool TryReadToken(ParserContext context, out IToken token)
         {
             var value = new StringBuilder();

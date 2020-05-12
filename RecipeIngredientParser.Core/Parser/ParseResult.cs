@@ -10,11 +10,6 @@ namespace RecipeIngredientParser.Core.Parser
     public class ParseResult
     {
         /// <summary>
-        /// Gets or sets the raw ingredient provided as input.
-        /// </summary>
-        public string RawIngredient { get; set; }
-        
-        /// <summary>
         /// Gets or sets the ingredient details extracted by the parser.
         /// </summary>
         public IngredientDetails Ingredient { get; set; }

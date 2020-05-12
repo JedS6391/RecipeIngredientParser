@@ -5,10 +5,15 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
 {
+    /// <summary>
+    /// A token reader responsible for the {ingredient} token type.
+    /// </summary>
     public class IngredientTokenReader : ITokenReader
     {
+        /// <inheritdoc/>
         public string TokenType => "{ingredient}";
         
+        /// <inheritdoc/>
         public bool TryReadToken(ParserContext context, out IToken token)
         {
             var rawIngredient = new StringBuilder();

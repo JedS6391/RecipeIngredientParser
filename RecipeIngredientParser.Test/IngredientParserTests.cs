@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using RecipeIngredientParser.Core;
 using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Strategy;
+using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
@@ -12,12 +13,16 @@ namespace RecipeIngredientParser.Test
 {
     public class IngredientParserTests
     {
-        private IngredientParser _ingredientParser;
-        private ITokenReader[] _tokenReaders = 
+        private readonly ITokenReader[] _tokenReaders = 
         {
             new AmountTokenReader(), 
             new UnitTokenReader(), 
             new IngredientTokenReader()
+        };
+
+        private readonly IParserStrategy[] _parserStrategies =
+        {
+            new FullMatchParserStrategy()
         };
 
         private static dynamic[][] _testCases =
@@ -42,7 +47,6 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    RawIngredient = "1 bag vegan sausages",
                     Ingredient = new ParseResult.IngredientDetails()
                     {
                         Amount = "1",
@@ -73,7 +77,6 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    RawIngredient = "2 grams chocolate",
                     Ingredient = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
@@ -104,7 +107,6 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    RawIngredient = "cheese: 3 cups",
                     Ingredient = new ParseResult.IngredientDetails()
                     {
                         Amount = "3",
@@ -125,10 +127,13 @@ namespace RecipeIngredientParser.Test
             Type[] expectedTokens,
             ParseResult expectedParsedResult)
         {
-            var parser = IngredientParser.Builder
+            var parser = IngredientParser
+                .Builder
                 .New
                 .WithTemplateDefinitions(templateDefinition)
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
+                .WithParserStrategy(ParserStrategyOption.OnlyAcceptFullMatch)
+                .WithParserStrategyFactory(new ParserStrategyFactory(_parserStrategies))
                 .Build();
 
             var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
@@ -146,7 +151,6 @@ namespace RecipeIngredientParser.Test
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedResult.RawIngredient, parseResult.RawIngredient);
             Assert.AreEqual(expectedParsedResult.Ingredient.Amount, parseResult.Ingredient.Amount);
             Assert.AreEqual(expectedParsedResult.Ingredient.Unit, parseResult.Ingredient.Unit);
             Assert.AreEqual(expectedParsedResult.Ingredient.Form, parseResult.Ingredient.Form);
