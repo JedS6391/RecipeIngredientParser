@@ -1,5 +1,6 @@
 ﻿using System;
 using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Parser.Strategy;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Tokens;
@@ -8,22 +9,18 @@ using RecipeIngredientParser.Core.Tokens.Readers;
 
 namespace RecipeIngredientParser.Example
 {
+    /// <summary>
+    /// An example program to demonstrate the ingredient parser.
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
         {
             var parser = CreateParser();
+            var input = string.Empty;
             
-            while (true)
+            while ((input = GetInput()) != "exit")
             {
-                Console.WriteLine("Enter recipe ingredient to parse (or type exit): ");
-                var input = Console.ReadLine();
-
-                if (input.Trim().ToLower() == "exit")
-                {
-                    Environment.Exit(0);
-                }
-
                 if (parser.TryParseIngredient(input, out var parseResult))
                 {
                     Console.WriteLine("Successfully parsed provided ingredient:");
@@ -53,6 +50,15 @@ namespace RecipeIngredientParser.Example
             }
         }
 
+        private static string GetInput()
+        {
+            Console.WriteLine("Enter recipe ingredient to parse (or type exit): ");
+            
+            var input = Console.ReadLine();
+
+            return input.Trim().ToLower();
+        }
+
         private static IngredientParser CreateParser()
         {
             var tokenReaders = new ITokenReader[]
@@ -71,49 +77,42 @@ namespace RecipeIngredientParser.Example
             return IngredientParser
                 .Builder
                 .New
-                .WithTemplateDefinitions(
-                    "{amount} {unit} {form} {ingredient}",
-                    "{amount} {unit} {ingredient}")
-                .WithTokenReaderFactory(new TokenReaderFactory(tokenReaders))
-                .WithParserStrategy(ParserStrategyOption.AcceptFirstFullMatch)
-                .WithParserStrategyFactory(new ParserStrategyFactory(parserStrategies))
-                .Build();
+                .WithDefaultConfiguration();
         }
 
         private static void DisplayToken(IToken token)
         {
             var tokenOutput = $"{token.GetType().Name}({{0}})";
 
-            switch (token)
+            tokenOutput = token switch
             {
-                case LiteralToken literalToken:
-                    tokenOutput = string.Format(tokenOutput, $"'{literalToken.Value}'");
-                    break;
+                LiteralToken literalToken =>
+                    tokenOutput = string.Format(tokenOutput, $"'{literalToken.Value}'"),
+
+                LiteralAmountToken literalAmountToken =>
+                    tokenOutput = string.Format(tokenOutput, literalAmountToken.Amount),
+
+                FractionalAmountToken fractionalAmountToken =>
+                    tokenOutput = string.Format(
+                        tokenOutput,
+                        $"{fractionalAmountToken.Numerator}/{fractionalAmountToken.Denominator}"),
+
+                RangeAmountToken rangeAmountToken =>
+                    tokenOutput = string.Format(
+                        tokenOutput,
+                        $"{rangeAmountToken.LowerBound}-{rangeAmountToken.UpperBound}"),
+
+                UnitToken unitToken =>
+                    tokenOutput = string.Format(tokenOutput, unitToken.Unit),
+
+                FormToken formToken =>
+                    tokenOutput = string.Format(tokenOutput, formToken.Form),
+
+                IngredientToken ingredientToken =>
+                    tokenOutput = string.Format(tokenOutput, ingredientToken.Ingredient),
                 
-                case LiteralAmountToken literalAmountToken:
-                    tokenOutput = string.Format(tokenOutput, literalAmountToken.Amount);
-                    break;
-                
-                case FractionalAmountToken fractionalAmountToken:
-                    tokenOutput = string.Format(tokenOutput, $"{fractionalAmountToken.Numerator}/{fractionalAmountToken.Denominator}");
-                    break;
-                
-                case RangeAmountToken rangeAmountToken:
-                    tokenOutput = string.Format(tokenOutput, $"{rangeAmountToken.LowerBound}-{rangeAmountToken.UpperBound}");
-                    break;  
-                
-                case UnitToken unitToken:
-                    tokenOutput = string.Format(tokenOutput, unitToken.Unit);
-                    break;
-                
-                case FormToken formToken:
-                    tokenOutput = string.Format(tokenOutput, formToken.Form);
-                    break;
-                
-                case IngredientToken ingredientToken:
-                    tokenOutput = string.Format(tokenOutput, ingredientToken.Ingredient);
-                    break;
-            }
+                _ => string.Empty
+            };
 
             Console.WriteLine($"-> {tokenOutput}");
         }

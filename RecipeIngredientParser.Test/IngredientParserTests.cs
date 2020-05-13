@@ -112,7 +112,7 @@ namespace RecipeIngredientParser.Test
             new dynamic[]
             {
                 // Template definition
-                "{amount} {unit} {ingredient}",
+                TemplateDefinitions.AmountUnitIngredient,
                 // Raw ingredient
                 "1 bag vegan sausages",
                 // Expected tokens
@@ -142,7 +142,7 @@ namespace RecipeIngredientParser.Test
             new dynamic[]
             {
                 // Template definition
-                "{amount} {unit} {ingredient}",
+                TemplateDefinitions.AmountUnitIngredient,
                 // Raw ingredient
                 "2 grams chocolate",
                 // Expected tokens
@@ -172,7 +172,7 @@ namespace RecipeIngredientParser.Test
             new dynamic[]
             {
                 // Template definition
-                "{ingredient}: {amount} {unit}",
+                TemplateDefinitions.IngredientAmountUnit,
                 // Raw ingredient
                 "cheese: 3 cups",
                 // Expected tokens
@@ -202,7 +202,7 @@ namespace RecipeIngredientParser.Test
             new dynamic[]
             {
                 // Template definition
-                "{amount} {unit} {form} {ingredient}",
+                TemplateDefinitions.AmountUnitFormIngredient,
                 // Raw ingredient
                 "2 cups grated cheese",
                 // Expected tokens
@@ -242,8 +242,8 @@ namespace RecipeIngredientParser.Test
                 // Template definitions
                 new string[]
                 {
-                    "{amount} {unit} {form} {ingredient}",
-                    "{amount} {unit} {ingredient}"
+                    TemplateDefinitions.AmountUnitFormIngredient,
+                    TemplateDefinitions.AmountUnitIngredient
                 },
                 // Strategy option
                 ParserStrategyOption.AcceptFirstFullMatch,
@@ -280,8 +280,8 @@ namespace RecipeIngredientParser.Test
                 // Template definitions
                 new string[]
                 {
-                    "{amount} {unit} {ingredient}",
-                    "{amount} {unit} {form} {ingredient}",
+                    TemplateDefinitions.AmountUnitIngredient,
+                    TemplateDefinitions.AmountUnitFormIngredient
                 },
                 // Strategy option
                 ParserStrategyOption.AcceptFirstFullMatch,
@@ -321,8 +321,8 @@ namespace RecipeIngredientParser.Test
                 // Template definitions
                 new string[]
                 {
-                    "{amount} {unit} {form} {ingredient}",
-                    "{amount} {unit} {ingredient}"
+                    TemplateDefinitions.AmountUnitFormIngredient,
+                    TemplateDefinitions.AmountUnitIngredient,
                 },
                 // Strategy option
                 ParserStrategyOption.AcceptBestFullMatch,
@@ -359,8 +359,8 @@ namespace RecipeIngredientParser.Test
                 // Template definitions
                 new string[]
                 {
-                    "{amount} {unit} {ingredient}",
-                    "{amount} {unit} {form} {ingredient}",
+                    TemplateDefinitions.AmountUnitIngredient,
+                    TemplateDefinitions.AmountUnitFormIngredient,
                 },
                 // Strategy option
                 ParserStrategyOption.AcceptBestFullMatch,
