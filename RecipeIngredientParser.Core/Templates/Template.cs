@@ -23,7 +23,6 @@ namespace RecipeIngredientParser.Core.Templates
     {
         private static readonly Regex TemplateRegex = new Regex(@"(\{[a-z]+\})");
         
-        private readonly string _templateDefinition;
         private readonly ITokenReaderFactory _tokenReaderFactory;
         private readonly Lazy<IEnumerable<ITokenReader>> _tokenReaders;
 
@@ -36,10 +35,15 @@ namespace RecipeIngredientParser.Core.Templates
             string templateDefinition,
             ITokenReaderFactory tokenReaderFactory)
         {
-            _templateDefinition = templateDefinition;
+            Definition = templateDefinition;
             _tokenReaderFactory = tokenReaderFactory;
             _tokenReaders = new Lazy<IEnumerable<ITokenReader>>(InitialiseTokenReaders);
         }
+
+        /// <summary>
+        /// Gets the definition this template represents.
+        /// </summary>
+        public string Definition { get; }
 
         /// <summary>
         /// Attempts to tokenize the provided context according to this templates definition.
@@ -81,7 +85,7 @@ namespace RecipeIngredientParser.Core.Templates
         
         private IEnumerable<ITokenReader> InitialiseTokenReaders()
         {
-            var tokenTypes = TemplateRegex.Split(_templateDefinition);
+            var tokenTypes = TemplateRegex.Split(Definition);
 
             // If there is no token reader for a token type then we
             // fall back to the literal token reader.

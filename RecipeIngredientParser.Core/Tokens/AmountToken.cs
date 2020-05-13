@@ -134,7 +134,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="FractionalAmountToken"/> instance.</param>
         public void Visit(FractionalAmountToken token)
         {
-            _parseResult.Ingredient.Amount = $"{token.Denominator}/{token.Numerator}";
+            _parseResult.Ingredient.Amount = $"{token.Numerator}/{token.Denominator}";
         }
         
         /// <summary>
