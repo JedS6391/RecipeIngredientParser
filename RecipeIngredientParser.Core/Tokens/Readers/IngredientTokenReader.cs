@@ -18,8 +18,7 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         {
             var rawIngredient = new StringBuilder();
             
-            while (context.HasNext() && 
-                   (context.IsLetter() || context.IsWhitespace()))
+            while (context.HasNext() && NextCharacterIsValid(context))
             {
                 var c = context.Next();
                 
@@ -43,5 +42,10 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
                 Ingredient = rawIngredient.Trim()
             };
         }
+
+        private bool NextCharacterIsValid(ParserContext context) =>
+            context.IsLetter() ||
+            context.IsWhitespace() ||
+            context.Matches(c => c == '-');
     }
 }

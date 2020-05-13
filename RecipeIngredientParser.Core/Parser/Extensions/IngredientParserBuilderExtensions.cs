@@ -11,12 +11,18 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
     /// </summary>
     public static class IngredientParserBuilderExtensions
     {
-        public static IngredientParser WithDefaultConfiguration(this IngredientParser.Builder builder)
+        public static IngredientParser.Builder WithDefaultConfiguration(this IngredientParser.Builder builder)
         {
             return builder
                 .WithTemplateDefinitions(
                     TemplateDefinitions.AmountUnitFormIngredient,
-                    TemplateDefinitions.AmountUnitIngredient
+                    TemplateDefinitions.AmountUnitIngredient,
+                    TemplateDefinitions.IngredientAmountUnit,
+                    TemplateDefinitions.AmountIngredientForm,
+                    TemplateDefinitions.AmountUnitOfFormIngredient,
+                    TemplateDefinitions.UnitOfFormIngredient,
+                    TemplateDefinitions.Ingredient,
+                    TemplateDefinitions.AmountUnitIngredientForm
                 )
                 .WithTokenReaderFactory(new TokenReaderFactory(new ITokenReader[]
                 {
@@ -29,8 +35,7 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
                 .WithParserStrategyFactory(new ParserStrategyFactory(new IParserStrategy[]
                 {
                     new FirstFullMatchParserStrategy()
-                }))
-                .Build();
+                }));
         }
     }
 }

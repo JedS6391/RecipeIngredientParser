@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using RecipeIngredientParser.Core.Parser.Exceptions;
 
 namespace RecipeIngredientParser.Core.Parser
@@ -45,7 +46,7 @@ namespace RecipeIngredientParser.Core.Parser
 
             throw new ParserOutOfBoundsException(
         "Unable to read next character as all characters have been consumed.");
-        } 
+        }
 
         /// <summary>
         /// Attempts to consume the specified character.

@@ -32,7 +32,7 @@ namespace RecipeIngredientParser.Test
         
         [Test, Sequential]
         public void IngredientTokenReader_TryReadIngredientWithPunctuation_ShouldReadTokenSuccessfully(
-            [Values("onion:", "cheese: ", "vegan sausages - ")]
+            [Values("onion:", "cheese: ", "vegan sausages; ")]
             string ingredientInput,
             [Values("onion", "cheese", "vegan sausages")]
             string ingredientOutput)

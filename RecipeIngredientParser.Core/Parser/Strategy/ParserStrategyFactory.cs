@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
+using RecipeIngredientParser.Core.Parser.Exceptions;
 
 namespace RecipeIngredientParser.Core.Parser.Strategy
 {
@@ -24,7 +25,8 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         /// <inheritdoc/>
         public IParserStrategy GetStrategy(ParserStrategyOption strategyOption)
         {
-            return _parserStrategies.First(s => s.Handles(strategyOption));
+            return _parserStrategies.FirstOrDefault(s => s.Handles(strategyOption))
+                ?? throw new ParserStrategyNotFoundException($"No parser strategy found that can handle {strategyOption}.");
         }
     }
 }

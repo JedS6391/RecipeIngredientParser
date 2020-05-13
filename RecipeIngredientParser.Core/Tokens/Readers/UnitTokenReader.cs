@@ -30,9 +30,16 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             { "gram", UnitType.Gram },
             { "grams", UnitType.Gram },
             { "g.", UnitType.Gram },
-            { "g", UnitType.Gram }
+            { "g", UnitType.Gram },
+            { "handful", UnitType.Handful },
+            { "ounce", UnitType.Ounce },
+            { "ounces", UnitType.Ounce },
+            { "oz", UnitType.Ounce },
+            { "oz.", UnitType.Ounce },
+            { "can", UnitType.Can },
+            { "cans", UnitType.Can }
         };
-
+        
         private readonly IDictionary<string, UnitType> _unitMappings;
 
         /// <summary>

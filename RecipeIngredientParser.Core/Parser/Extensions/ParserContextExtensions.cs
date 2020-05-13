@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace RecipeIngredientParser.Core.Parser.Extensions
 {
     /// <summary>

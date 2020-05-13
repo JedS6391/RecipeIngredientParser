@@ -61,23 +61,46 @@ namespace RecipeIngredientParser.Example
 
         private static IngredientParser CreateParser()
         {
-            var tokenReaders = new ITokenReader[]
+            var bestMatchHeuristic = BestMatchHeuristics.WeightedTokenHeuristic(token =>
             {
-                new AmountTokenReader(),
-                new UnitTokenReader(),
-                new FormTokenReader(),
-                new IngredientTokenReader()
-            };
+                switch (token)
+                {
+                    case LiteralToken _:
+                        return 0.0m;
+                    
+                    case LiteralAmountToken _:
+                    case FractionalAmountToken _:
+                    case RangeAmountToken _:
+                        return 1.0m;
+                    
+                    case UnitToken unitToken:
+                        return unitToken.Type == UnitType.Unknown ?
+                            // Punish unknown unit types
+                            -1.0m :
+                            1.0m;
+                    
+                    case FormToken _:
+                        return 1.0m;
+                    
+                    case IngredientToken _:
+                        return 2.0m;
+                }
 
+                return 0.0m;
+            });
+            
             var parserStrategies = new IParserStrategy[]
             {
-                new FirstFullMatchParserStrategy()
+                new BestFullMatchParserStrategy(bestMatchHeuristic)
             };
 
             return IngredientParser
                 .Builder
                 .New
-                .WithDefaultConfiguration();
+                .WithDefaultConfiguration()
+                .WithParserStrategy(ParserStrategyOption.AcceptBestFullMatch)
+                .WithParserStrategyFactory(new ParserStrategyFactory(parserStrategies))
+                .Build();
         }
 
         private static void DisplayToken(IToken token)

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using RecipeIngredientParser.Core.Parser.Exceptions;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
@@ -13,8 +12,6 @@ namespace RecipeIngredientParser.Core.Parser
     /// </summary>
     public class IngredientParser
     {
-        private static readonly Regex WhitespaceRegex = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
-
         private readonly IEnumerable<Template> _templates;
         private readonly ParserStrategyOption _strategyOption;
         private readonly IParserStrategyFactory _parserStrategyFactory;
@@ -49,21 +46,14 @@ namespace RecipeIngredientParser.Core.Parser
         public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
         {
             // TODO: Input validation.
-            rawIngredient = NormalizeRawIngredient(rawIngredient);
+            rawIngredient = InputSanitizer.Sanitize(rawIngredient);
             var context = new ParserContext(rawIngredient);
 
             var parserStrategy = _parserStrategyFactory.GetStrategy(_strategyOption);
             
             return parserStrategy.TryParseIngredient(context, _templates, out parseResult);
         }
-
-        private string NormalizeRawIngredient(string rawIngredient)
-        {
-            return WhitespaceRegex
-                .Replace(rawIngredient, " ")
-                .ToLower();
-        }
-
+        
         #region Builder
         
         /// <summary>

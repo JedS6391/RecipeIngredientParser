@@ -28,6 +28,21 @@ namespace RecipeIngredientParser.Core.Tokens
         Gram,
         
         /// <summary>
+        /// A handful.
+        /// </summary>
+        Handful,
+        
+        /// <summary>
+        /// An ounce.
+        /// </summary>
+        Ounce,
+        
+        /// <summary>
+        /// A can.
+        /// </summary>
+        Can,
+        
+        /// <summary>
         /// A catch-all for unknown unit types.
         /// </summary>
         Unknown
