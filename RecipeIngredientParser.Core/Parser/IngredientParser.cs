@@ -45,7 +45,11 @@ namespace RecipeIngredientParser.Core.Parser
         /// </returns>
         public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
         {
-            // TODO: Input validation.
+            if (string.IsNullOrEmpty(rawIngredient))
+            {
+                throw new InvalidParserInputException("Input is not able to be parsed.");
+            }
+            
             rawIngredient = InputSanitizer.Sanitize(rawIngredient);
             var context = new ParserContext(rawIngredient);
 
