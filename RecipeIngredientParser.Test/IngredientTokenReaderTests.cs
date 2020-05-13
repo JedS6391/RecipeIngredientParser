@@ -15,7 +15,7 @@ namespace RecipeIngredientParser.Test
             _ingredientTokenReader = new IngredientTokenReader();
         }
         
-        [Test, Combinatorial]
+        [Test, Sequential]
         public void IngredientTokenReader_TryReadIngredient_ShouldReadTokenSuccessfully(
             [Values("onion", "cheese", "vegan sausages")]
             string ingredient)
@@ -26,7 +26,7 @@ namespace RecipeIngredientParser.Test
             var result = _ingredientTokenReader.TryReadToken(context, out var token);
             
             Assert.IsTrue(result);
-            Assert.IsTrue(typeof(IngredientToken) == token.GetType());
+            Assert.IsInstanceOf<IngredientToken>(token);
             Assert.AreEqual(((IngredientToken) token).Ingredient, ingredient);
         }
         
@@ -43,7 +43,7 @@ namespace RecipeIngredientParser.Test
             var result = _ingredientTokenReader.TryReadToken(context, out var token);
             
             Assert.IsTrue(result);
-            Assert.IsTrue(typeof(IngredientToken) == token.GetType());
+            Assert.IsInstanceOf<IngredientToken>(token);
             Assert.AreEqual(((IngredientToken) token).Ingredient, ingredientOutput);
         }
     }

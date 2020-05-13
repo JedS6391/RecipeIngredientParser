@@ -6,12 +6,17 @@ namespace RecipeIngredientParser.Core.Parser
     public enum ParserStrategyOption
     {
         /// <summary>
-        /// Only full matches will be accepted - partial and non-matches will be discarded.
+        /// The first full match will be accepted - partial and non-matches will be discarded.
         /// </summary>
-        OnlyAcceptFullMatch,
+        AcceptFirstFullMatch,
         
         /// <summary>
-        /// The best partial match will be accepted (if there is one).
+        /// The best full match will be accepted - partial and non-matches will be discarded.
+        /// </summary>
+        AcceptBestFullMatch,
+        
+        /// <summary>
+        /// The best partial match will be accepted, if there is one.
         /// </summary>
         AcceptBestPartialMatch
     }

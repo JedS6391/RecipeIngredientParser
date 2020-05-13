@@ -23,10 +23,10 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
                     new UnitTokenReader(),
                     new IngredientTokenReader()
                 }))
-                .WithParserStrategy(ParserStrategyOption.OnlyAcceptFullMatch)
+                .WithParserStrategy(ParserStrategyOption.AcceptFirstFullMatch)
                 .WithParserStrategyFactory(new ParserStrategyFactory(new IParserStrategy[]
                 {
-                    new FullMatchParserStrategy()
+                    new FirstFullMatchParserStrategy()
                 }))
                 .Build();
         }

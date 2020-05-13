@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using RecipeIngredientParser.Core.Parser.Exceptions;
@@ -77,7 +76,7 @@ namespace RecipeIngredientParser.Core.Parser
             private IParserStrategyFactory _parserStrategyFactory;
 
             private ParserStrategyOption _strategyOption =
-                ParserStrategyOption.OnlyAcceptFullMatch;
+                ParserStrategyOption.AcceptFirstFullMatch;
             
             /// <summary>
             /// Gets a new builder instance to start the construction process.
@@ -110,7 +109,7 @@ namespace RecipeIngredientParser.Core.Parser
             /// Configures the parser to use the specified parsing strategy option.
             /// </summary>
             /// <remarks>
-            /// By default, <see cref="ParserStrategyOption.OnlyAcceptFullMatch"/> will be used
+            /// By default, <see cref="ParserStrategyOption.AcceptFirstFullMatch"/> will be used
             /// if not explicitly set during construction.
             /// </remarks>
             /// <param name="strategyOption">A parsing strategy option to use.</param>

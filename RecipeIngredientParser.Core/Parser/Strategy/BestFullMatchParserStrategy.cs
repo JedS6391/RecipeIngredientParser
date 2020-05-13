@@ -8,10 +8,12 @@ using RecipeIngredientParser.Core.Tokens;
 namespace RecipeIngredientParser.Core.Parser.Strategy
 {
     /// <summary>
-    /// A <see cref="IParserStrategy"/> implementation that accepts full matches
-    /// or the best partial match if no full match is found.
+    /// A <see cref="IParserStrategy"/> implementation that only accepts full template matches.
     /// </summary>
-    public class BestPartialMatchParserStrategy : IParserStrategy
+    /// <remarks>
+    /// Note that only the best full match will be returned.
+    /// </remarks>
+    public class BestFullMatchParserStrategy : IParserStrategy
     {
         private readonly BestMatchHeuristic _bestMatchHeuristic;
 
@@ -19,31 +21,31 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         /// Initialises a new instance of the <see cref="BestFullMatchParserStrategy"/>
         /// with the default <see cref="BestMatchHeuristic"/>.
         /// </summary>
-        public BestPartialMatchParserStrategy()
+        public BestFullMatchParserStrategy()
         {
             _bestMatchHeuristic = BestMatchHeuristics.GreatestNumberOfTokensHeuristic();
         }
-        
+
         /// <summary>
         /// Initialises a new instance of the <see cref="BestFullMatchParserStrategy"/>
         /// with the specified <see cref="BestMatchHeuristic"/>.
         /// </summary>
-        public BestPartialMatchParserStrategy(BestMatchHeuristic bestMatchHeuristic)
+        public BestFullMatchParserStrategy(BestMatchHeuristic bestMatchHeuristic)
         {
             _bestMatchHeuristic = bestMatchHeuristic;
         }
         
         /// <inheritdoc/>
         public bool Handles(ParserStrategyOption strategyOption) =>
-            strategyOption == ParserStrategyOption.AcceptBestPartialMatch;
+            strategyOption == ParserStrategyOption.AcceptBestFullMatch;
 
-            /// <inheritdoc/>
+        /// <inheritdoc/>
         public bool TryParseIngredient(
-            ParserContext context, 
-            IEnumerable<Template> templates, 
+            ParserContext context,
+            IEnumerable<Template> templates,
             out ParseResult parseResult)
         {
-            var partialMatches = new List<ParseResult.ParseMetadata>();
+            var fullMatches = new List<ParseResult.ParseMetadata>();
             
             foreach (var template in templates)
             {
@@ -54,46 +56,30 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                 switch (result)
                 {
                     case TemplateMatchResult.NoMatch:
-                        // Always skip non-matches.
-                        continue;
                     case TemplateMatchResult.PartialMatch:
-                        // Take a note of partial matches, so that we can find
-                        // the best match when no full matches are found
-                        partialMatches.Add(new ParseResult.ParseMetadata()
-                        {
-                            Template = template,
-                            MatchResult = TemplateMatchResult.PartialMatch,
-                            Tokens = tokens.ToList()
-                        });
-                        
+                        // Always skip non-matches or partial matches.
                         continue;
                     
                     case TemplateMatchResult.FullMatch:
                         // Stop on the first full match
-                        parseResult = new ParseResult()
+                        fullMatches.Add( new ParseResult.ParseMetadata()
                         {
-                            Ingredient = new ParseResult.IngredientDetails(),
-                            Metadata = new ParseResult.ParseMetadata()
-                            {
-                                Template = template,
-                                MatchResult = TemplateMatchResult.FullMatch,
-                                Tokens =  tokens.ToList()
-                            }
-                        };
+                            Template = template,
+                            MatchResult = TemplateMatchResult.FullMatch,
+                            Tokens =  tokens.ToList()
+                        });
 
-                        VisitTokens(parseResult);
-                        
-                        return true;
-                    
+                        continue;
+
                     default:
                         // TODO
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            
-            if (partialMatches.Any())
+
+            if (fullMatches.Any())
             {
-                var bestMatchMetadata = _bestMatchHeuristic.Invoke(partialMatches);
+                var bestMatchMetadata = _bestMatchHeuristic.Invoke(fullMatches);
 
                 parseResult = new ParseResult()
                 {
@@ -101,22 +87,17 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                     Metadata = bestMatchMetadata
                 };
                 
-                VisitTokens(parseResult);
+                foreach (var token in parseResult.Metadata.Tokens)
+                {
+                    token.Accept(new ParserTokenVisitor(parseResult));
+                }
 
                 return true;
             }
-
+            
             parseResult = null;
 
             return false;
-        }
-
-        private void VisitTokens(ParseResult parseResult)
-        {
-            foreach (var token in parseResult.Metadata.Tokens)
-            {
-                token.Accept(new ParserTokenVisitor(parseResult));
-            }
         }
     }
 }

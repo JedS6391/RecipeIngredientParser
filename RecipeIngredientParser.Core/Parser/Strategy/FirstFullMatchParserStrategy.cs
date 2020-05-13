@@ -13,14 +13,12 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
     /// <remarks>
     /// Note that only the first full match will be returned.
     /// </remarks>
-    public class FullMatchParserStrategy : IParserStrategy
+    public class FirstFullMatchParserStrategy : IParserStrategy
     {
         /// <inheritdoc/>
-        public bool Handles(ParserStrategyOption strategyOption)
-        {
-            return strategyOption == ParserStrategyOption.OnlyAcceptFullMatch;
-        }
-        
+        public bool Handles(ParserStrategyOption strategyOption) =>
+            strategyOption == ParserStrategyOption.AcceptFirstFullMatch;
+
         /// <inheritdoc/>
         public bool TryParseIngredient(
             ParserContext context, 

@@ -27,7 +27,7 @@ namespace RecipeIngredientParser.Test
             var result = _amountTokenReader.TryReadToken(context, out var token);
             
             Assert.IsTrue(result);
-            Assert.IsTrue(typeof(LiteralAmountToken) == token.GetType());
+            Assert.IsInstanceOf<LiteralAmountToken>(token);
             Assert.AreEqual(((LiteralAmountToken) token).Amount, amount);
         }
         
@@ -42,7 +42,7 @@ namespace RecipeIngredientParser.Test
             var result = _amountTokenReader.TryReadToken(context, out var token);
             
             Assert.IsTrue(result);
-            Assert.IsTrue(typeof(FractionalAmountToken) == token.GetType());
+            Assert.IsInstanceOf<FractionalAmountToken>(token);
             Assert.AreEqual(((FractionalAmountToken) token).Numerator, numerator);
             Assert.AreEqual(((FractionalAmountToken) token).Denominator, denominator);
         }
@@ -58,7 +58,7 @@ namespace RecipeIngredientParser.Test
             var result = _amountTokenReader.TryReadToken(context, out var token);
             
             Assert.IsTrue(result);
-            Assert.IsTrue(typeof(RangeAmountToken) == token.GetType());
+            Assert.IsInstanceOf<RangeAmountToken>(token);
             Assert.AreEqual(((RangeAmountToken) token).LowerBound, lowerBound);
             Assert.AreEqual(((RangeAmountToken) token).UpperBound, upperBound);
         }
