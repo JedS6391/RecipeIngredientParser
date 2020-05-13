@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
@@ -69,10 +69,10 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         {
             var rawUnit = new StringBuilder();
             
-            while (context.HasNext() && 
-                   (context.IsLetter() || context.Matches(c => c == '.')))
+            while (context.Buffer.HasNext() && 
+                   (context.Buffer.IsLetter() || context.Buffer.Matches(c => c == '.')))
             {
-                var c = context.Next();
+                var c = context.Buffer.Next();
                 
                 rawUnit.Append(c);
             }

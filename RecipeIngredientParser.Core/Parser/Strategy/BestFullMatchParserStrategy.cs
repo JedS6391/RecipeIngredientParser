@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens;
@@ -49,7 +50,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
             
             foreach (var template in templates)
             {
-                context.Reset();
+                context.Buffer.Reset();
                 
                 var result = template.TryReadTokens(context, out var tokens);
 

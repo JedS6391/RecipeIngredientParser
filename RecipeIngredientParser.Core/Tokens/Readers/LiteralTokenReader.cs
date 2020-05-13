@@ -1,5 +1,5 @@
 using System.Text;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
@@ -31,9 +31,9 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             
             foreach (var t in TokenType)
             {
-                if (context.HasNext() && context.Peek() == t)
+                if (context.Buffer.HasNext() && context.Buffer.Peek() == t)
                 {
-                    context.Consume(t);
+                    context.Buffer.Consume(t);
                 }
                 else
                 {

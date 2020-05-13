@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Templates.Exceptions;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 using RecipeIngredientParser.Core.Tokens.Readers;

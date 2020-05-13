@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
@@ -22,9 +22,9 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         {
             var rawForm = new StringBuilder();
             
-            while (context.HasNext() && context.IsLetter())
+            while (context.Buffer.HasNext() && context.Buffer.IsLetter())
             {
-                var c = context.Next();
+                var c = context.Buffer.Next();
                 
                 rawForm.Append(c);
 

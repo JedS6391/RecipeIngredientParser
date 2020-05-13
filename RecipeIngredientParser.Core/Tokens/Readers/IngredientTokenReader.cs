@@ -1,5 +1,5 @@
 using System.Text;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
@@ -18,9 +18,9 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         {
             var rawIngredient = new StringBuilder();
             
-            while (context.HasNext() && NextCharacterIsValid(context))
+            while (context.Buffer.HasNext() && NextCharacterIsValid(context))
             {
-                var c = context.Next();
+                var c = context.Buffer.Next();
                 
                 rawIngredient.Append(c);
             }
@@ -44,8 +44,8 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         }
 
         private bool NextCharacterIsValid(ParserContext context) =>
-            context.IsLetter() ||
-            context.IsWhitespace() ||
-            context.Matches(c => c == '-');
+            context.Buffer.IsLetter() ||
+            context.Buffer.IsWhitespace() ||
+            context.Buffer.Matches(c => c == '-');
     }
 }

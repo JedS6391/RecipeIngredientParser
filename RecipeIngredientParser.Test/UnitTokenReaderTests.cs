@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Readers;
 

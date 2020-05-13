@@ -1,4 +1,4 @@
-using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Context;
 
 namespace RecipeIngredientParser.Core.Tokens.Abstract
 {
