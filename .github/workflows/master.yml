@@ -20,5 +20,8 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
+    - name: Run tests
+      run: dotnet test 
+
     - name: Push package to Nuget
       run: dotnet nuget push RecipeIngredientParser.Core/bin/Release/RecipeIngredientParser.Core.*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
