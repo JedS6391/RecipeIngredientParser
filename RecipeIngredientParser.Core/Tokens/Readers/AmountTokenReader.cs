@@ -51,31 +51,16 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
                 return null;
             }
 
-            var isFraction = rawAmount.Contains("/");
-            var isRange = rawAmount.Contains("-");
-
-            if (isFraction)
+            if (FractionalAmountToken.TryParse(rawAmount, out var fractionalAmountToken))
             {
-                var parts = rawAmount.Split('/');
+                return fractionalAmountToken;
+            }
 
-                return new FractionalAmountToken()
-                {
-                    Numerator = int.Parse(parts[0]),
-                    Denominator = int.Parse(parts[1])
-                };
+            if (RangeAmountToken.TryParse(rawAmount, out var rangeAmountToken))
+            {
+                return rangeAmountToken;
             }
             
-            if (isRange)
-            {
-                var parts = rawAmount.Split('-');
-
-                return new RangeAmountToken()
-                {
-                    LowerBound = int.Parse(parts[0]),
-                    UpperBound = int.Parse(parts[1])
-                };
-            }
-
             return new LiteralAmountToken()
             {
                 Amount = int.Parse(rawAmount)

@@ -2,6 +2,9 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens
 {
+    /// <summary>
+    /// Represents a form token.
+    /// </summary>
     public class FormToken : IToken
     {
         public string Form { get; set; }

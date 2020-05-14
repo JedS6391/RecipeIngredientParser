@@ -15,6 +15,26 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             "drained",
             "shredded"
         };
+
+        private readonly HashSet<string> _forms;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="FormTokenReader"/> class
+        /// that will use the default forms.
+        /// </summary>
+        public FormTokenReader()
+        {
+            _forms = DefaultForms;
+        }
+        
+        /// <summary>
+        /// Initialises a new instance of the <see cref="FormTokenReader"/> class
+        /// that will use the specified forms.
+        /// </summary>
+        public FormTokenReader(HashSet<string> forms)
+        {
+            _forms = forms;
+        }
         
         public string TokenType => "{form}";
         

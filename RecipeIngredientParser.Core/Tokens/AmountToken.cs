@@ -77,6 +77,37 @@ namespace RecipeIngredientParser.Core.Tokens
         
         /// <inheritdoc/>
         public AmountTokenType Type => AmountTokenType.Fraction;
+
+        /// <summary>
+        /// Attempts to create a <see cref="FractionalAmountToken"/> instance from a raw amount.
+        /// </summary>
+        /// <param name="rawAmount">The raw amount to create a <see cref="FractionalAmountToken"/> from.</param>
+        /// <param name="fractionalAmountToken">
+        /// When this method returns, contains a <see cref="FractionalAmountToken"/> that represents
+        /// the provided raw amount when the parsing succeeded, or <see langword="null"/> if the parsing failed.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> when the token read succeeded; <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool TryParse(string rawAmount, out FractionalAmountToken fractionalAmountToken)
+        {
+            if (rawAmount.Contains("/"))
+            {
+                var parts = rawAmount.Split('/');
+
+                fractionalAmountToken = new FractionalAmountToken()
+                {
+                    Numerator = int.Parse(parts[0]),
+                    Denominator = int.Parse(parts[1])
+                };
+
+                return true;
+            }
+
+            fractionalAmountToken = null;
+            
+            return false;
+        }
         
         /// <inheritdoc/>
         public void Accept(ParserTokenVisitor parserTokenVisitor)
@@ -102,6 +133,37 @@ namespace RecipeIngredientParser.Core.Tokens
         
         /// <inheritdoc/>
         public AmountTokenType Type => AmountTokenType.Range;
+        
+        /// <summary>
+        /// Attempts to create a <see cref="RangeAmountToken"/> instance from a raw amount.
+        /// </summary>
+        /// <param name="rawAmount">The raw amount to create a <see cref="RangeAmountToken"/> from.</param>
+        /// <param name="rangeAmountToken">
+        /// When this method returns, contains a <see cref="RangeAmountToken"/> that represents
+        /// the provided raw amount when the parsing succeeded, or <see langword="null"/> if the parsing failed.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> when the token read succeeded; <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool TryParse(string rawAmount, out RangeAmountToken rangeAmountToken)
+        {
+            if (rawAmount.Contains("-"))
+            {
+                var parts = rawAmount.Split('-');
+                
+                rangeAmountToken = new RangeAmountToken()
+                {
+                    LowerBound = int.Parse(parts[0]),
+                    UpperBound = int.Parse(parts[1])
+                };
+
+                return true;
+            }
+
+            rangeAmountToken = null;
+            
+            return false;
+        }        
         
         /// <inheritdoc/>
         public void Accept(ParserTokenVisitor parserTokenVisitor)
