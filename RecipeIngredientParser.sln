@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeIngredientParser.Core", "RecipeIngredientParser.Core\RecipeIngredientParser.Core.csproj", "{81D5289E-DD43-4E9B-B243-66F14CF90E71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeIngredientParser.Test", "RecipeIngredientParser.Test\RecipeIngredientParser.Test.csproj", "{9F27CCCA-8388-4153-8A54-613120A97AB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeIngredientParser.Example", "RecipeIngredientParser.Example\RecipeIngredientParser.Example.csproj", "{1CC5A678-9AFB-4C1B-A187-B72EE2086985}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81D5289E-DD43-4E9B-B243-66F14CF90E71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81D5289E-DD43-4E9B-B243-66F14CF90E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81D5289E-DD43-4E9B-B243-66F14CF90E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81D5289E-DD43-4E9B-B243-66F14CF90E71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F27CCCA-8388-4153-8A54-613120A97AB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F27CCCA-8388-4153-8A54-613120A97AB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F27CCCA-8388-4153-8A54-613120A97AB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F27CCCA-8388-4153-8A54-613120A97AB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CC5A678-9AFB-4C1B-A187-B72EE2086985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CC5A678-9AFB-4C1B-A187-B72EE2086985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CC5A678-9AFB-4C1B-A187-B72EE2086985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CC5A678-9AFB-4C1B-A187-B72EE2086985}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
