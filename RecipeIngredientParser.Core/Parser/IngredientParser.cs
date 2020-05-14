@@ -44,6 +44,7 @@ namespace RecipeIngredientParser.Core.Parser
         /// <returns>
         /// <see langword="true"/> if the parsing succeeded; <see langword="false"/> otherwise.
         /// </returns>
+        /// <exception cref="InvalidParserInputException">When the parser is provided an input that is not valid.</exception>
         public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
         {
             if (string.IsNullOrEmpty(rawIngredient))
@@ -161,17 +162,12 @@ namespace RecipeIngredientParser.Core.Parser
                     throw new ParserBuilderException("Unable to build parser in current state.");
                 }
                 
-                var templates = BuildTemplates();
+                var templates = _templateDefinitions.Select(CreateTemplate);
 
                 return new IngredientParser(
                     templates, 
                     _strategyOption,
                     _parserStrategyFactory);
-            }
-
-            private IEnumerable<Template> BuildTemplates()
-            {
-                return _templateDefinitions.Select(CreateTemplate);
             }
 
             private Template CreateTemplate(string definition)

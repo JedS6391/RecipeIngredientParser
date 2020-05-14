@@ -7,8 +7,20 @@ namespace RecipeIngredientParser.Core.Parser
     /// </summary>
     public static class InputSanitizer
     {
-        private static readonly Regex WhitespaceRegex = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
+        /// <summary>
+        /// Matches 2 or more space characters.
+        /// </summary>
+        private static readonly Regex SpacesRegex = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
+        
+        /// <summary>
+        /// Matches a string like 'x to y' where x/y are digits. The lookbehind/lookahead are used to ignore
+        /// the x/y components so we just get the 'to'.
+        /// </summary>
         private static readonly Regex ToRangeRegex = new Regex(@"((?<=[0-9])+ to (?=[0-9]+))", RegexOptions.Compiled);
+        
+        /// <summary>
+        /// Matches any characters between brackets (e.g. '(text)').
+        /// </summary>
         private static readonly Regex BracketedTextRegex = new Regex(@"(\(.+\))", RegexOptions.Compiled);
         
         /// <summary>
@@ -18,9 +30,9 @@ namespace RecipeIngredientParser.Core.Parser
         /// <returns>The sanitized input.</returns>
         public static string Sanitize(string input)
         {
-            // Ensure that any extraneous whitespace is removed
+            // Ensure that any extraneous spaces are removed
             // 'test  string' -> 'test string'
-            input = WhitespaceRegex.Replace(input, " ");
+            input = SpacesRegex.Replace(input, " ");
 
             // Try to substitute some common expressions
             // 'x to y' -> 'x-y'
