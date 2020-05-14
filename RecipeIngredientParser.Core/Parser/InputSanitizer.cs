@@ -19,7 +19,7 @@ namespace RecipeIngredientParser.Core.Parser
         private static readonly Regex ToRangeRegex = new Regex(@"((?<=[0-9])+ to (?=[0-9]+))", RegexOptions.Compiled);
         
         /// <summary>
-        /// Matches any characters between brackets (e.g. '(text)').
+        /// Matches a string with any characters between brackets (e.g. '(text)').
         /// </summary>
         private static readonly Regex BracketedTextRegex = new Regex(@"(\(.+\))", RegexOptions.Compiled);
         

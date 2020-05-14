@@ -21,6 +21,9 @@ namespace RecipeIngredientParser.Core.Templates
     /// </remarks>
     public class Template
     {
+        /// <summary>
+        /// Matches a string like '{tokenType}'.
+        /// </summary>
         private static readonly Regex TemplateRegex = new Regex(@"(\{[a-z]+\})");
         
         private readonly ITokenReaderFactory _tokenReaderFactory;

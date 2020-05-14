@@ -91,7 +91,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                         continue;
                     
                     case TemplateMatchResult.FullMatch:
-                        // Stop on the first full match
+                        // Keep track of full matches.
                         fullMatches.Add( new ParseResult.ParseMetadata()
                         {
                             Template = template,
