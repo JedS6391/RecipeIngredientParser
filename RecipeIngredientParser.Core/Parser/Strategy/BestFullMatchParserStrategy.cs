@@ -46,6 +46,35 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
             IEnumerable<Template> templates,
             out ParseResult parseResult)
         {
+            var fullMatches = FindFullMatches(context, templates);
+
+            if (fullMatches.Any())
+            {
+                var bestMatchMetadata = _bestMatchHeuristic.Invoke(fullMatches);
+
+                parseResult = new ParseResult()
+                {
+                    Ingredient = new ParseResult.IngredientDetails(),
+                    Metadata = bestMatchMetadata
+                };
+                
+                foreach (var token in parseResult.Metadata.Tokens)
+                {
+                    token.Accept(new ParserTokenVisitor(parseResult));
+                }
+
+                return true;
+            }
+            
+            parseResult = null;
+
+            return false;
+        }
+
+        private List<ParseResult.ParseMetadata> FindFullMatches(
+            ParserContext context, 
+            IEnumerable<Template> templates)
+        {
             var fullMatches = new List<ParseResult.ParseMetadata>();
             
             foreach (var template in templates)
@@ -73,32 +102,12 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                         continue;
 
                     default:
-                        // TODO
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(
+                $"Encountered unknown template match result: {result}");
                 }
             }
 
-            if (fullMatches.Any())
-            {
-                var bestMatchMetadata = _bestMatchHeuristic.Invoke(fullMatches);
-
-                parseResult = new ParseResult()
-                {
-                    Ingredient = new ParseResult.IngredientDetails(),
-                    Metadata = bestMatchMetadata
-                };
-                
-                foreach (var token in parseResult.Metadata.Tokens)
-                {
-                    token.Accept(new ParserTokenVisitor(parseResult));
-                }
-
-                return true;
-            }
-            
-            parseResult = null;
-
-            return false;
+            return fullMatches;
         }
     }
 }

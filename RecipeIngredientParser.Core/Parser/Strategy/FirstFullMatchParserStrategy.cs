@@ -60,8 +60,8 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                         return true;
                     
                     default:
-                        // TODO
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(
+                $"Encountered unknown template match result: {result}");
                 }
             }
 
