@@ -54,7 +54,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
 
                 parseResult = new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails(),
+                    Details = new ParseResult.IngredientDetails(),
                     Metadata = bestMatchMetadata
                 };
                 

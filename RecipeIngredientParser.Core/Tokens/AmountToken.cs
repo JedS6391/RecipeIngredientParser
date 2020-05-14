@@ -187,7 +187,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="LiteralAmountToken"/> instance.</param>
         public void Visit(LiteralAmountToken token)
         {
-            _parseResult.Ingredient.Amount = token.Amount.ToString();
+            _parseResult.Details.Amount = token.Amount.ToString();
         }
         
         /// <summary>
@@ -196,7 +196,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="FractionalAmountToken"/> instance.</param>
         public void Visit(FractionalAmountToken token)
         {
-            _parseResult.Ingredient.Amount = $"{token.Numerator}/{token.Denominator}";
+            _parseResult.Details.Amount = $"{token.Numerator}/{token.Denominator}";
         }
         
         /// <summary>
@@ -205,7 +205,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="RangeAmountToken"/> instance.</param>
         public void Visit(RangeAmountToken token)
         {
-            _parseResult.Ingredient.Amount = $"{token.LowerBound}-{token.UpperBound}";
+            _parseResult.Details.Amount = $"{token.LowerBound}-{token.UpperBound}";
         }
     }
 

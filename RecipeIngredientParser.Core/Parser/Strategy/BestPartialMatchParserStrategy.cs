@@ -73,7 +73,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                         // Stop on the first full match
                         parseResult = new ParseResult()
                         {
-                            Ingredient = new ParseResult.IngredientDetails(),
+                            Details = new ParseResult.IngredientDetails(),
                             Metadata = new ParseResult.ParseMetadata()
                             {
                                 Template = template,
@@ -98,7 +98,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
 
                 parseResult = new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails(),
+                    Details = new ParseResult.IngredientDetails(),
                     Metadata = bestMatchMetadata
                 };
                 

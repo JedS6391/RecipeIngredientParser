@@ -28,7 +28,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="FormToken"/> instance.</param>
         public void Visit(FormToken token)
         {
-            _parseResult.Ingredient.Form = token.Form;
+            _parseResult.Details.Form = token.Form;
         }
     }
     

@@ -32,7 +32,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="IngredientToken"/> instance.</param>
         public void Visit(IngredientToken token)
         {
-            _parseResult.Ingredient.Ingredient = token.Ingredient;
+            _parseResult.Details.Ingredient = token.Ingredient;
         }
     }
     

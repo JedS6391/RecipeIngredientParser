@@ -60,10 +60,10 @@ namespace RecipeIngredientParser.Test
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedResult.Ingredient.Amount, parseResult.Ingredient.Amount);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Unit, parseResult.Ingredient.Unit);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Form, parseResult.Ingredient.Form);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Ingredient, parseResult.Ingredient.Ingredient);
+            Assert.AreEqual(expectedParsedResult.Details.Amount, parseResult.Details.Amount);
+            Assert.AreEqual(expectedParsedResult.Details.Unit, parseResult.Details.Unit);
+            Assert.AreEqual(expectedParsedResult.Details.Form, parseResult.Details.Form);
+            Assert.AreEqual(expectedParsedResult.Details.Ingredient, parseResult.Details.Ingredient);
         }
         
         [Test]
@@ -99,10 +99,10 @@ namespace RecipeIngredientParser.Test
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedResult.Ingredient.Amount, parseResult.Ingredient.Amount);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Unit, parseResult.Ingredient.Unit);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Form, parseResult.Ingredient.Form);
-            Assert.AreEqual(expectedParsedResult.Ingredient.Ingredient, parseResult.Ingredient.Ingredient);
+            Assert.AreEqual(expectedParsedResult.Details.Amount, parseResult.Details.Amount);
+            Assert.AreEqual(expectedParsedResult.Details.Unit, parseResult.Details.Unit);
+            Assert.AreEqual(expectedParsedResult.Details.Form, parseResult.Details.Form);
+            Assert.AreEqual(expectedParsedResult.Details.Ingredient, parseResult.Details.Ingredient);
         }
 
         #region Test case definitions
@@ -129,7 +129,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "1",
                         Form = null,
@@ -159,7 +159,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = null,
@@ -189,7 +189,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "3",
                         Form = null,
@@ -221,7 +221,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = "grated",
@@ -265,7 +265,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = "grated",
@@ -301,7 +301,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = null,
@@ -344,7 +344,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = "grated",
@@ -382,7 +382,7 @@ namespace RecipeIngredientParser.Test
                 // Expected parsed ingredient
                 new ParseResult()
                 {
-                    Ingredient = new ParseResult.IngredientDetails()
+                    Details = new ParseResult.IngredientDetails()
                     {
                         Amount = "2",
                         Form = "grated",

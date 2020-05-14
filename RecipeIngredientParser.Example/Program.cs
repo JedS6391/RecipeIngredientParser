@@ -24,10 +24,10 @@ namespace RecipeIngredientParser.Example
                 if (parser.TryParseIngredient(input, out var parseResult))
                 {
                     Console.WriteLine("Successfully parsed provided ingredient:");
-                    Console.WriteLine($"\tAmount: {parseResult.Ingredient.Amount}");
-                    Console.WriteLine($"\tUnit: {parseResult.Ingredient.Unit}");
-                    Console.WriteLine($"\tForm: {parseResult.Ingredient.Form}");
-                    Console.WriteLine($"\tIngredient: {parseResult.Ingredient.Ingredient}");
+                    Console.WriteLine($"\tAmount: {parseResult.Details.Amount}");
+                    Console.WriteLine($"\tUnit: {parseResult.Details.Unit}");
+                    Console.WriteLine($"\tForm: {parseResult.Details.Form}");
+                    Console.WriteLine($"\tIngredient: {parseResult.Details.Ingredient}");
 
                     Console.WriteLine();
                     Console.WriteLine("Matching template:");

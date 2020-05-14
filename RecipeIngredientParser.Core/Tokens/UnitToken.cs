@@ -83,7 +83,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="UnitToken"/> instance.</param>
         public void Visit(UnitToken token)
         {
-            _parseResult.Ingredient.Unit = token.Unit;
+            _parseResult.Details.Unit = token.Unit;
         }
     }
     

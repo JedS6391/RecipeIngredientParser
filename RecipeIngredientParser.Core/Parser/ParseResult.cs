@@ -12,7 +12,7 @@ namespace RecipeIngredientParser.Core.Parser
         /// <summary>
         /// Gets or sets the ingredient details extracted by the parser.
         /// </summary>
-        public IngredientDetails Ingredient { get; set; }
+        public IngredientDetails Details { get; set; }
         
         /// <summary>
         /// Gets or sets metadata relating to the parse operation.
@@ -63,7 +63,7 @@ namespace RecipeIngredientParser.Core.Parser
         public class ParseMetadata
         {
             /// <summary>
-            /// Gets or sets the template that was used to parse the <see cref="Ingredient"/>.
+            /// Gets or sets the template that was used to parse the <see cref="ParseResult.Details"/>.
             /// </summary>
             public Template Template { get; set; }
             
