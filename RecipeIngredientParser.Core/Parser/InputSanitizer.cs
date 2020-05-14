@@ -21,7 +21,7 @@ namespace RecipeIngredientParser.Core.Parser
         /// <summary>
         /// Matches a string with any characters between brackets (e.g. '(text)').
         /// </summary>
-        private static readonly Regex BracketedTextRegex = new Regex(@"(\(.+\))", RegexOptions.Compiled);
+        private static readonly Regex BracketedTextRegex = new Regex(@"(\(.*?\))", RegexOptions.Compiled);
         
         /// <summary>
         /// Sanitizes the input by removing extraneous characters and substituting common patterns with known tokens.
@@ -33,7 +33,7 @@ namespace RecipeIngredientParser.Core.Parser
             // Ensure that any extraneous spaces are removed
             // 'test  string' -> 'test string'
             input = SpacesRegex.Replace(input, " ");
-
+            
             // Try to substitute some common expressions
             // 'x to y' -> 'x-y'
             input = ToRangeRegex.Replace(input, "-");
@@ -41,6 +41,9 @@ namespace RecipeIngredientParser.Core.Parser
             // Remove bracketed text
             // 'x (y)' -> x 
             input = BracketedTextRegex.Replace(input, string.Empty);
+            
+            // Remove extraneous spaces a second time in case substitutions introduced any spaces.
+            input = SpacesRegex.Replace(input, " ");
 
             // Always convert to lower case.
             return input.ToLower();
