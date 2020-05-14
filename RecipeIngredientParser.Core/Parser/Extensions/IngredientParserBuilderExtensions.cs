@@ -14,16 +14,7 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         public static IngredientParser.Builder WithDefaultConfiguration(this IngredientParser.Builder builder)
         {
             return builder
-                .WithTemplateDefinitions(
-                    TemplateDefinitions.AmountUnitFormIngredient,
-                    TemplateDefinitions.AmountUnitIngredient,
-                    TemplateDefinitions.IngredientAmountUnit,
-                    TemplateDefinitions.AmountIngredientForm,
-                    TemplateDefinitions.AmountUnitOfFormIngredient,
-                    TemplateDefinitions.UnitOfFormIngredient,
-                    TemplateDefinitions.Ingredient,
-                    TemplateDefinitions.AmountUnitIngredientForm
-                )
+                .WithTemplateDefinitions(TemplateDefinitions.DefaultTemplateDefinitions)
                 .WithTokenReaderFactory(new TokenReaderFactory(new ITokenReader[]
                 {
                     new AmountTokenReader(),

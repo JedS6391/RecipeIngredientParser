@@ -13,5 +13,17 @@ namespace RecipeIngredientParser.Core.Templates
         public const string AmountUnitOfFormIngredient = "{amount} {unit} of {form} {ingredient}";
         public const string UnitOfFormIngredient = "{unit} of {form} {ingredient}";
         public const string Ingredient = "{ingredient}";
+
+        public static readonly string[] DefaultTemplateDefinitions =
+        {
+            AmountUnitFormIngredient,
+            AmountUnitIngredient,
+            IngredientAmountUnit,
+            AmountIngredientForm,
+            AmountUnitIngredientForm,
+            AmountUnitOfFormIngredient,
+            UnitOfFormIngredient,
+            Ingredient
+        };
     }
 }
