@@ -11,6 +11,31 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
     /// </summary>
     public static class IngredientParserBuilderExtensions
     {
+        /// <summary>
+        /// Configures an <see cref="IngredientParser.Builder"/> instance with a set of default configurations.
+        /// </summary>
+        /// <remarks>
+        /// The configuration applied is as follows:
+        /// <list type="bullet">
+        ///     <item>
+        ///        <description>
+        ///             Template definitions: <see cref="TemplateDefinitions.DefaultTemplateDefinitions"/>
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///            Token readers:
+        ///                 <see cref="AmountTokenReader"/>, <see cref="UnitTokenReader"/>,
+        ///                 <see cref="FormTokenReader"/>, <see cref="IngredientTokenReader"/>.
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///        <description>Parser strategy: <see cref="ParserStrategyOption.AcceptFirstFullMatch"/></description>
+        ///     </item>
+        /// </list>
+        /// </remarks>
+        /// <param name="builder">A <see cref="IngredientParser.Builder"/> instance to configure with defaults.</param>
+        /// <returns>A <see cref="IngredientParser.Builder"/> instance with the defaults configured.</returns>
         public static IngredientParser.Builder WithDefaultConfiguration(this IngredientParser.Builder builder)
         {
             return builder

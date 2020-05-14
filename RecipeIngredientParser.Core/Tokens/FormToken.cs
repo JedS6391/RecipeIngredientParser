@@ -7,8 +7,12 @@ namespace RecipeIngredientParser.Core.Tokens
     /// </summary>
     public class FormToken : IToken
     {
+        /// <summary>
+        /// Gets or sets the form.
+        /// </summary>
         public string Form { get; set; }
         
+        /// <inheritdoc/>
         public void Accept(ParserTokenVisitor parserTokenVisitor)
         {
             parserTokenVisitor.Visit(this);

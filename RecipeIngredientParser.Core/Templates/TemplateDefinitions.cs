@@ -5,6 +5,8 @@ namespace RecipeIngredientParser.Core.Templates
     /// </summary>
     public static class TemplateDefinitions
     {
+        #pragma warning disable CS1591
+        
         public const string AmountUnitFormIngredient = "{amount} {unit} {form} {ingredient}";
         public const string AmountUnitIngredient = "{amount} {unit} {ingredient}";
         public const string AmountNoSpaceUnitIngredient = "{amount}{unit} {ingredient}";
@@ -16,6 +18,11 @@ namespace RecipeIngredientParser.Core.Templates
         public const string Ingredient = "{ingredient}";
         public const string AmountIngredient = "{amount} {ingredient}";
 
+        #pragma warning restore CS1591
+        
+        /// <summary>
+        /// Provides a set of default template definitions.
+        /// </summary>
         public static readonly string[] DefaultTemplateDefinitions =
         {
             AmountUnitFormIngredient,

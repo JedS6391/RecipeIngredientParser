@@ -6,6 +6,9 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 
 namespace RecipeIngredientParser.Core.Tokens.Readers
 {
+    /// <summary>
+    /// A token reader responsible for the {form} token type.
+    /// </summary>
     public class FormTokenReader : ITokenReader
     {
         private static readonly HashSet<string> DefaultForms = new HashSet<string>
@@ -36,8 +39,10 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             _forms = forms;
         }
         
+        /// <inheritdoc/>
         public string TokenType => "{form}";
         
+        /// <inheritdoc/>
         public bool TryReadToken(ParserContext context, out IToken token)
         {
             var rawForm = new StringBuilder();
