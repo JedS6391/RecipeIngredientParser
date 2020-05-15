@@ -53,13 +53,16 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
                 
                 rawForm.Append(c);
 
-                // Stop once we find something that matches one of the known forms.
-                if (DefaultForms.Contains(rawForm.ToString()))
+                // Continue reading until we find something that matches one of the known forms.
+                if (!_forms.Contains(rawForm.ToString()))
                 {
-                    token = GenerateToken(rawForm.ToString());
-
-                    return true;
+                    continue;
                 }
+                
+                // Matched a known form.
+                token = GenerateToken(rawForm.ToString());
+
+                return true;
             }
 
             token = null;

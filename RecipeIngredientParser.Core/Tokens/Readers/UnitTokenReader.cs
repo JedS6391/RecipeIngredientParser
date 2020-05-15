@@ -98,12 +98,9 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
 
         private UnitType GetUnitType(string rawUnit)
         {
-            if (_unitMappings.TryGetValue(rawUnit, out var unitType))
-            {
-                return unitType;
-            }
-
-            return UnitType.Unknown;
+            return _unitMappings.TryGetValue(rawUnit, out var unitType) ? 
+                unitType : 
+                UnitType.Unknown;
         }
     }
 }

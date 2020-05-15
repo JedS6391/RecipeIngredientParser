@@ -12,7 +12,7 @@ namespace RecipeIngredientParser.Core.Parser.Exceptions
         /// </summary>
         /// <param name="message">A message describing the exception.</param>
         public InvalidParserInputException(string message) 
-            : base() 
+            : base(message) 
         {}
     }
 }
