@@ -6,7 +6,7 @@ using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Unit
 {
     public class BestMatchHeuristicTests
     {

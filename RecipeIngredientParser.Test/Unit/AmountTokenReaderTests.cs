@@ -4,7 +4,7 @@ using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Unit
 {
     public class AmountTokenReaderTests
     {

@@ -9,7 +9,7 @@ using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Integration
 {
     public class IngredientParserTests
     {
