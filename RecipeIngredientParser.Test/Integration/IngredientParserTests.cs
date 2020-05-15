@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Sanitization;
+using RecipeIngredientParser.Core.Parser.Sanitization.Abstract;
 using RecipeIngredientParser.Core.Parser.Strategy;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
@@ -27,6 +29,17 @@ namespace RecipeIngredientParser.Test.Integration
             new BestFullMatchParserStrategy(), 
             new BestPartialMatchParserStrategy()
         };
+
+        private readonly IInputSanitizationRule[] _sanitizationRules =
+        {
+            new RemoveExtraneousSpacesRule(),
+            new RangeSubstitutionRule(),
+            new RemoveBracketedTextRule(),
+            new RemoveAlternateIngredientsRule(),
+            new ReplaceUnicodeFractionsRule(),
+            new RemoveExtraneousSpacesRule(),
+            new ConvertToLowerCaseRule()
+        };
         
         [Test]
         [TestCaseSource(nameof(_singleTemplateTestCases))]
@@ -43,6 +56,7 @@ namespace RecipeIngredientParser.Test.Integration
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
                 .WithParserStrategy(ParserStrategyOption.AcceptFirstFullMatch)
                 .WithParserStrategyFactory(new ParserStrategyFactory(_parserStrategies))
+                .WithSanitizationRules(_sanitizationRules)
                 .Build();
 
             var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
@@ -82,6 +96,7 @@ namespace RecipeIngredientParser.Test.Integration
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
                 .WithParserStrategy(strategyOption)
                 .WithParserStrategyFactory(new ParserStrategyFactory(_parserStrategies))
+                .WithSanitizationRules(_sanitizationRules)
                 .Build();
 
             var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
