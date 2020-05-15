@@ -10,7 +10,7 @@ namespace RecipeIngredientParser.Test.Unit
 {
     public class BestMatchHeuristicTests
     {
-        private static readonly ParseResult.ParseMetadata[] Matches = new[]
+        private static readonly ParseResult.ParseMetadata[] Matches =
         {
             new ParseResult.ParseMetadata()
             {

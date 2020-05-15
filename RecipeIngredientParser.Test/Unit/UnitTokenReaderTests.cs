@@ -98,7 +98,7 @@ namespace RecipeIngredientParser.Test.Unit
         [Test]
         public void UnitTokenReader_TryReadInvalidUnit_ShouldReadTokenSuccessfully()
         {
-            var rawIngredient = $"4 grated carrot";
+            const string rawIngredient = "4 grated carrot";
             var context = new ParserContext(rawIngredient);
 
             var result = _unitTokenReader.TryReadToken(context, out var token);

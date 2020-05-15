@@ -66,7 +66,7 @@ namespace RecipeIngredientParser.Test.Unit
         [Test]
         public void AmountTokenReader_TryReadInvalidAmount_ShouldNotReadTokenSuccessfully()
         {
-            var rawIngredient = $"test cups grated carrot";
+            const string rawIngredient = "test cups grated carrot";
             var context = new ParserContext(rawIngredient);
 
             var result = _amountTokenReader.TryReadToken(context, out var token);
