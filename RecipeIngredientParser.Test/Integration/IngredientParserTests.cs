@@ -240,7 +240,7 @@ namespace RecipeIngredientParser.Test.Integration
             new dynamic[]
             {
                 // Template definitions
-                new
+                new string[]
                 {
                     TemplateDefinitions.AmountUnitFormIngredient,
                     TemplateDefinitions.AmountUnitIngredient
@@ -278,7 +278,7 @@ namespace RecipeIngredientParser.Test.Integration
             new dynamic[]
             {
                 // Template definitions
-                new
+                new string[]
                 {
                     TemplateDefinitions.AmountUnitIngredient,
                     TemplateDefinitions.AmountUnitFormIngredient
@@ -319,7 +319,7 @@ namespace RecipeIngredientParser.Test.Integration
             new dynamic[]
             {
                 // Template definitions
-                new
+                new string[]
                 {
                     TemplateDefinitions.AmountUnitFormIngredient,
                     TemplateDefinitions.AmountUnitIngredient
@@ -357,7 +357,7 @@ namespace RecipeIngredientParser.Test.Integration
             new dynamic[]
             {
                 // Template definitions
-                new
+                new string[]
                 {
                     TemplateDefinitions.AmountUnitIngredient,
                     TemplateDefinitions.AmountUnitFormIngredient
