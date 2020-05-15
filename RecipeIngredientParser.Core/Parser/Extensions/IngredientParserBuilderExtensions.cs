@@ -1,3 +1,5 @@
+using RecipeIngredientParser.Core.Parser.Sanitization;
+using RecipeIngredientParser.Core.Parser.Sanitization.Abstract;
 using RecipeIngredientParser.Core.Parser.Strategy;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
@@ -32,6 +34,14 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         ///     <item>
         ///        <description>Parser strategy: <see cref="ParserStrategyOption.AcceptFirstFullMatch"/></description>
         ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             Sanitization rules:
+        ///                <see cref="RemoveExtraneousSpacesRule"/>, <see cref="RangeSubstitutionRule"/>,
+        ///                <see cref="RemoveBracketedTextRule"/>, <see cref="RemoveAlternateIngredientsRule"/>,
+        ///                <see cref="ReplaceUnicodeFractionsRule"/>, <see cref="ConvertToLowerCaseRule"/>.
+        ///         </description>
+        ///     </item>
         /// </list>
         /// </remarks>
         /// <param name="builder">A <see cref="IngredientParser.Builder"/> instance to configure with defaults.</param>
@@ -51,7 +61,17 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
                 .WithParserStrategyFactory(new ParserStrategyFactory(new IParserStrategy[]
                 {
                     new FirstFullMatchParserStrategy()
-                }));
+                }))
+                .WithSanitizationRules(new IInputSanitizationRule[]
+                {
+                    new RemoveExtraneousSpacesRule(), 
+                    new RangeSubstitutionRule(), 
+                    new RemoveBracketedTextRule(), 
+                    new RemoveAlternateIngredientsRule(), 
+                    new ReplaceUnicodeFractionsRule(), 
+                    new RemoveExtraneousSpacesRule(), 
+                    new ConvertToLowerCaseRule()
+                });
         }
     }
 }

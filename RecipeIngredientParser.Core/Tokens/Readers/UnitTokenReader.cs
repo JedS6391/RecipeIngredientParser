@@ -37,7 +37,8 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             { "oz", UnitType.Ounce },
             { "oz.", UnitType.Ounce },
             { "can", UnitType.Can },
-            { "cans", UnitType.Can }
+            { "cans", UnitType.Can },
+            { "bunch", UnitType.Bunch }
         };
         
         private readonly IDictionary<string, UnitType> _unitMappings;
