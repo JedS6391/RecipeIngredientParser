@@ -5,19 +5,18 @@ using RecipeIngredientParser.Core.Parser.Strategy;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
-using RecipeIngredientParser.Core.Tokens.Readers;
 
 namespace RecipeIngredientParser.Example
 {
     /// <summary>
     /// An example program to demonstrate the ingredient parser.
     /// </summary>
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var parser = CreateParser();
-            var input = string.Empty;
+            string input;
             
             while ((input = GetInput()) != "exit")
             {
