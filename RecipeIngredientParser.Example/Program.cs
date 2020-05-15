@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Parser.Strategy;
@@ -40,6 +41,13 @@ namespace RecipeIngredientParser.Example
                         DisplayToken(token);
                     }
 
+                    var totalScore = parseResult
+                        .Metadata
+                        .Tokens
+                        .Sum(t => TokenWeightResolver.Invoke(t));
+                    
+                    Console.WriteLine($"Total score: {totalScore}");
+
                     Console.WriteLine();
                 }
                 else
@@ -78,8 +86,10 @@ namespace RecipeIngredientParser.Example
         {
             switch (token)
             {
-                case LiteralToken _:
-                    return 0.0m;
+                case LiteralToken literalToken:
+                    // Longer literals score more - the assumption being that
+                    // a longer literal means a more specific value.
+                    return 0.1m * literalToken.Value.Length;
                     
                 case LiteralAmountToken _:
                 case FractionalAmountToken _:
