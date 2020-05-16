@@ -410,7 +410,7 @@ namespace RecipeIngredientParser.Test.Integration
                 {
                     Amount = "1",
                     Unit = "can",
-                    Form = "drained and rinsed",
+                    Form = "drained",
                     Ingredient = "black beans"
                 }
             },

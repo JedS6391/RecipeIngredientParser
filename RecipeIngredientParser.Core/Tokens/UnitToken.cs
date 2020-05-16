@@ -48,6 +48,11 @@ namespace RecipeIngredientParser.Core.Tokens
         Bunch,
         
         /// <summary>
+        /// A pound.
+        /// </summary>
+        Pound,
+        
+        /// <summary>
         /// A catch-all for unknown unit types.
         /// </summary>
         Unknown
