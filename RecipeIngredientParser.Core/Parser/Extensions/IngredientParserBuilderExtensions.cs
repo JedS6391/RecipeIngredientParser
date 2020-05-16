@@ -57,11 +57,7 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
                     new FormTokenReader(),
                     new IngredientTokenReader()
                 }))
-                .WithParserStrategy(ParserStrategyOption.AcceptFirstFullMatch)
-                .WithParserStrategyFactory(new ParserStrategyFactory(new IParserStrategy[]
-                {
-                    new FirstFullMatchParserStrategy()
-                }))
+                .WithParserStrategy(new FirstFullMatchParserStrategy())
                 .WithSanitizationRules(new IInputSanitizationRule[]
                 {
                     new RemoveExtraneousSpacesRule(), 

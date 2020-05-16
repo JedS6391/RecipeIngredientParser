@@ -3,7 +3,6 @@ using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Parser.Strategy;
-using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
@@ -68,17 +67,12 @@ namespace RecipeIngredientParser.Example
 
         private static IngredientParser CreateParser()
         {
-            var parserStrategies = new IParserStrategy[]
-            {
-                new BestFullMatchParserStrategy(BestMatchHeuristics.WeightedTokenHeuristic(TokenWeightResolver))
-            };
-
             return IngredientParser
                 .Builder
                 .New
                 .WithDefaultConfiguration()
-                .WithParserStrategy(ParserStrategyOption.AcceptBestFullMatch)
-                .WithParserStrategyFactory(new ParserStrategyFactory(parserStrategies))
+                .WithParserStrategy(new BestFullMatchParserStrategy(
+                    BestMatchHeuristics.WeightedTokenHeuristic(TokenWeightResolver)))
                 .Build();
         }
         

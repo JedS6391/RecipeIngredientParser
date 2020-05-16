@@ -35,10 +35,6 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         }
         
         /// <inheritdoc/>
-        public bool Handles(ParserStrategyOption strategyOption) =>
-            strategyOption == ParserStrategyOption.AcceptBestPartialMatch;
-
-            /// <inheritdoc/>
         public bool TryParseIngredient(
             ParserContext context, 
             IEnumerable<Template> templates, 

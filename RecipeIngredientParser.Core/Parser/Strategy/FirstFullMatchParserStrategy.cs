@@ -17,10 +17,6 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
     public class FirstFullMatchParserStrategy : IParserStrategy
     {
         /// <inheritdoc/>
-        public bool Handles(ParserStrategyOption strategyOption) =>
-            strategyOption == ParserStrategyOption.AcceptFirstFullMatch;
-
-        /// <inheritdoc/>
         public bool TryParseIngredient(
             ParserContext context, 
             IEnumerable<Template> templates, 
