@@ -6,6 +6,8 @@ of parsing raw ingredient strings.
 This documentation provides insight to how the different components are used, 
 their functions, and provides usage demonstrations.
 
+![Core parser structure](./images/core-structure.svg)
+
 ## Contents
 
 - [Templates](./templates.md)
