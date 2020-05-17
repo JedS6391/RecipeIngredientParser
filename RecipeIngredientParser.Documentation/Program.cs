@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Sanitization;
@@ -26,6 +27,7 @@ namespace RecipeIngredientParser.Documentation
                 "unit-token" => UnitTokenExample(),
                 "form-token" => FormTokenExample(),
                 "ingredient-token" => IngredientTokenExample(),
+                "sanitization-rules" => SanitizationRulesExample(),
                 _ => throw new ArgumentException($"Unexpected region provided {region}")
             };
         }
@@ -251,6 +253,42 @@ namespace RecipeIngredientParser.Documentation
                 Console.WriteLine("Failed to read ingredient token.");
             }
             
+            #endregion
+
+            return 0;
+        }
+
+        private static int SanitizationRulesExample()
+        {
+            #region sanitization-rules
+
+            var inputs = new string[]
+            {
+                "2  cups  grated  cheese",
+                "2 to 3",
+                "8 whole wheat tortillas (about 8” in diameter)",
+                "1 bunch of broccoli or 1 small head of cauliflower",
+                "¼ teaspoon ground cumin",
+                "1 CUP Grated Cheese"
+            };
+
+            var rules = new IInputSanitizationRule[]
+            {
+                new RemoveExtraneousSpacesRule(),
+                new RangeSubstitutionRule(), 
+                new RemoveBracketedTextRule(),
+                new RemoveAlternateIngredientsRule(),
+                new ReplaceUnicodeFractionsRule(),
+                new ConvertToLowerCaseRule()
+            };
+
+            foreach (var (input, rule) in inputs.Zip(rules))
+            {
+                var sanitizedInput = rule.Apply(input);
+                
+                Console.WriteLine($"{rule.GetType().Name}(\"{input}\") => {sanitizedInput}");
+            }
+
             #endregion
 
             return 0;

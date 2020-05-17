@@ -10,11 +10,11 @@ their functions, and provides usage demonstrations.
 
 ## Contents
 
+- [Parser](./parser.md)
+- [Sanitization rules](./sanitization-rules.md)
+- [Parser stategies](./parser-strategies.md)
 - [Templates](./templates.md)
 - [Tokens](./tokens.md)
-- [Parser](./parser.md)
-- [Parser stategies](./parser-strategies.md)
-- [Sanitization rules](./sanitization-rules.md)
 
 ## Demos
 
