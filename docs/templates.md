@@ -34,7 +34,7 @@ responsible for extracting the token according to the definition.
 The template definition can be configured by the builder:
 
 ```cs
-var templateDefinition = "{amount} {unit} {ingredient};
+var templateDefinition = "{amount} {unit} {ingredient}";
 
 builder.WithTemplateDefinition(templateDefinition);
 ```
@@ -56,9 +56,12 @@ var tokenReaderFactory = new TokenReaderFactory(tokenReaders);
 builder.WithTokenReaderFactory(tokenReaderFactory);
 ```
 
+*Note: If the template definition contains a token type that has no corresponding token reader, it will be matched
+       by the `LiteralTokenReader`. The `LiteralTokenReader` attempts to exactly match a specified string.*
+
 ## Usage
 
-While it is not expected for the `Template` class to be used directly (instead an `IngredientParser`) would be used,
+While it is not expected for the `Template` class to be used directly (instead an `IngredientParser` would be used),
 it is still possible to directly use a template to try and match an ingredient string.
 
 A `TemplateMatchResult` will be returned to indicate the result of the template matching process. The extracted tokens
