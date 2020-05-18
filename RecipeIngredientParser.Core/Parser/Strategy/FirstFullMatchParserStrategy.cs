@@ -48,16 +48,18 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                             }
                         };
 
+                        var tokenVisitor = new ParserTokenVisitor(parseResult);
+
                         foreach (var token in parseResult.Metadata.Tokens)
                         {
-                            token.Accept(new ParserTokenVisitor(parseResult));
+                            token.Accept(tokenVisitor);
                         }
 
                         return true;
                     
                     default:
                         throw new ArgumentOutOfRangeException(
-                $"Encountered unknown template match result: {result}");
+                            $"Encountered unknown template match result: {result}");
                 }
             }
 

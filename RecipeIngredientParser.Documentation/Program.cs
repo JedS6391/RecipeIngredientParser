@@ -28,6 +28,7 @@ namespace RecipeIngredientParser.Documentation
                 "form-token" => FormTokenExample(),
                 "ingredient-token" => IngredientTokenExample(),
                 "sanitization-rules" => SanitizationRulesExample(),
+                "parser-strategies" => ParserStrategiesExample(),
                 _ => throw new ArgumentException($"Unexpected region provided {region}")
             };
         }
@@ -289,6 +290,80 @@ namespace RecipeIngredientParser.Documentation
                 Console.WriteLine($"{rule.GetType().Name}(\"{input}\") => {sanitizedInput}");
             }
 
+            #endregion
+
+            return 0;
+        }
+
+        private static int ParserStrategiesExample()
+        {
+            #region parser-strategies
+
+            static decimal ResolveTokenWeight(IToken token)
+            {
+                switch (token)
+                {
+                    case LiteralToken literalToken:
+                        // Longer literals score more - the assumption being that
+                        // a longer literal means a more specific value.
+                        return 0.1m * literalToken.Value.Length;
+            
+                    case LiteralAmountToken _:
+                    case FractionalAmountToken _:
+                    case RangeAmountToken _:
+                        return 1.0m;
+            
+                    case UnitToken unitToken:
+                        return unitToken.Type == UnitType.Unknown ?
+                            // Punish unknown unit types
+                            -1.0m :
+                            1.0m;
+            
+                    case FormToken _:
+                        return 1.0m;
+            
+                    case IngredientToken _:
+                        return 2.0m;
+                }
+
+                return 0.0m;   
+            }
+
+            var tokenReaderFactory = new TokenReaderFactory(new ITokenReader[]
+            {
+                new AmountTokenReader(),
+                new UnitTokenReader(),
+                new FormTokenReader(),
+                new IngredientTokenReader()
+            });
+            var context = new ParserContext("1 cup grated carrot");
+            var templates = new Template[]
+            {
+                Template
+                    .Builder
+                    .New
+                    .WithTemplateDefinition("{amount} {unit} {form} {ingredient}")
+                    .WithTokenReaderFactory(tokenReaderFactory)
+                    .Build()
+            };
+
+            var strategy = new BestFullMatchParserStrategy(
+                BestMatchHeuristics.WeightedTokenHeuristic(ResolveTokenWeight));
+
+            if (strategy.TryParseIngredient(context, templates, out var parseResult))
+            {
+                Console.WriteLine("Parse successful.");
+                Console.WriteLine();
+                Console.WriteLine($"\tAmount: {parseResult.Details.Amount}");
+                Console.WriteLine($"\tUnit: {parseResult.Details.Unit}");
+                Console.WriteLine($"\tForm: {parseResult.Details.Form}");
+                Console.WriteLine($"\tIngredient: {parseResult.Details.Ingredient}");
+            }
+            else 
+            {
+                Console.WriteLine("Parse not successful.");
+            }
+            
             #endregion
 
             return 0;
