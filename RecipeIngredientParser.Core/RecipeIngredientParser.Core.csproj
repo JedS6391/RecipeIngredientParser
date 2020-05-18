@@ -5,11 +5,15 @@
         <Title>Recipe Ingredient Parser</Title>
         <PackageDescription>Provides a parser for recipe ingredients.</PackageDescription>
         <PackageId>RecipeIngredientParser.Core</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>Jed Simson</Authors>
-        <PackageTags>recipe ingredient parser</PackageTags>
-        <Company></Company>
+        <PackageTags>recipe ingredient parser</PackageTags>        
+        <RepositoryUrl>https://github.com/JedS6391/RecipeIngredientParser</RepositoryUrl> 
+        <RepositoryType>git</RepositoryType> 
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
 </Project>
