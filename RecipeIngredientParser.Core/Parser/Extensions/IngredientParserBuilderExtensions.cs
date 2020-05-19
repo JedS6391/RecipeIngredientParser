@@ -1,7 +1,6 @@
 using RecipeIngredientParser.Core.Parser.Sanitization;
 using RecipeIngredientParser.Core.Parser.Sanitization.Abstract;
 using RecipeIngredientParser.Core.Parser.Strategy;
-using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 using RecipeIngredientParser.Core.Tokens.Readers;
@@ -32,7 +31,7 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         ///         </description>
         ///     </item>
         ///     <item>
-        ///        <description>Parser strategy: <see cref="ParserStrategyOption.AcceptFirstFullMatch"/></description>
+        ///        <description>Parser strategy: <see cref="FirstFullMatchParserStrategy"/></description>
         ///     </item>
         ///     <item>
         ///         <description>
