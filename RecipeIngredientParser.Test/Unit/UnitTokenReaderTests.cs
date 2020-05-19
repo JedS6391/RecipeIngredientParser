@@ -3,7 +3,7 @@ using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Unit
 {
     public class UnitTokenReaderTests
     {
@@ -98,7 +98,7 @@ namespace RecipeIngredientParser.Test
         [Test]
         public void UnitTokenReader_TryReadInvalidUnit_ShouldReadTokenSuccessfully()
         {
-            var rawIngredient = $"4 grated carrot";
+            const string rawIngredient = "4 grated carrot";
             var context = new ParserContext(rawIngredient);
 
             var result = _unitTokenReader.TryReadToken(context, out var token);

@@ -37,7 +37,12 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
             { "oz", UnitType.Ounce },
             { "oz.", UnitType.Ounce },
             { "can", UnitType.Can },
-            { "cans", UnitType.Can }
+            { "cans", UnitType.Can },
+            { "bunch", UnitType.Bunch },
+            { "pound", UnitType.Pound },
+            { "pounds", UnitType.Pound },
+            { "lb", UnitType.Pound },
+            { "lb.", UnitType.Pound }
         };
         
         private readonly IDictionary<string, UnitType> _unitMappings;
@@ -98,12 +103,9 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
 
         private UnitType GetUnitType(string rawUnit)
         {
-            if (_unitMappings.TryGetValue(rawUnit, out var unitType))
-            {
-                return unitType;
-            }
-
-            return UnitType.Unknown;
+            return _unitMappings.TryGetValue(rawUnit, out var unitType) ? 
+                unitType : 
+                UnitType.Unknown;
         }
     }
 }

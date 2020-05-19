@@ -2,6 +2,7 @@
 using System.Linq;
 using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Exceptions;
+using RecipeIngredientParser.Core.Parser.Sanitization.Abstract;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens.Abstract;
@@ -14,29 +15,29 @@ namespace RecipeIngredientParser.Core.Parser
     public class IngredientParser
     {
         private readonly IEnumerable<Template> _templates;
-        private readonly ParserStrategyOption _strategyOption;
-        private readonly IParserStrategyFactory _parserStrategyFactory;
+        private readonly IEnumerable<IInputSanitizationRule> _sanitizationRules;
+        private readonly IParserStrategy _parserStrategy;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="IngredientParser"/> class.
         /// </summary>
         /// <param name="templates">The set of templates the parser will attempt parsing with.</param>
-        /// <param name="strategyOption">The strategy option to use for parsing.</param>
-        /// <param name="parserStrategyFactory">A factory for parsing strategies.</param>
+        /// <param name="sanitizationRules">A set of rules the parser will use to sanitize the input.</param>
+        /// <param name="parserStrategy">A strategy that will be used for parsing.</param>
         private IngredientParser(
             IEnumerable<Template> templates,
-            ParserStrategyOption strategyOption,
-            IParserStrategyFactory parserStrategyFactory)
+            IEnumerable<IInputSanitizationRule> sanitizationRules,
+            IParserStrategy parserStrategy)
         {
             _templates = templates;
-            _strategyOption = strategyOption;
-            _parserStrategyFactory = parserStrategyFactory;
+            _sanitizationRules = sanitizationRules;
+            _parserStrategy = parserStrategy;
         }
         
         /// <summary>
         /// Attempts to parse a raw ingredient according to the configured templates and parsing strategy.
         /// </summary>
-        /// <param name="rawIngredient">A raw ingredient string to parse (e.g. 1 bag vegan sausages).</param>
+        /// <param name="ingredient">An ingredient string to parse (e.g. 1 bag vegan sausages).</param>
         /// <param name="parseResult">
         /// When this method returns, contains the result of parsing if the parse operation
         /// succeeded, or <see langword="null"/> if the parse failed.
@@ -45,19 +46,24 @@ namespace RecipeIngredientParser.Core.Parser
         /// <see langword="true"/> if the parsing succeeded; <see langword="false"/> otherwise.
         /// </returns>
         /// <exception cref="InvalidParserInputException">When the parser is provided an input that is not valid.</exception>
-        public bool TryParseIngredient(string rawIngredient, out ParseResult parseResult)
+        public bool TryParseIngredient(string ingredient, out ParseResult parseResult)
         {
-            if (string.IsNullOrEmpty(rawIngredient))
+            if (string.IsNullOrEmpty(ingredient))
             {
                 throw new InvalidParserInputException("Input is not able to be parsed.");
             }
             
-            rawIngredient = InputSanitizer.Sanitize(rawIngredient);
-            var context = new ParserContext(rawIngredient);
+            var sanitizedIngredient = Sanitize(ingredient);
+            var context = new ParserContext(sanitizedIngredient);
 
-            var parserStrategy = _parserStrategyFactory.GetStrategy(_strategyOption);
-            
-            return parserStrategy.TryParseIngredient(context, _templates, out parseResult);
+            return _parserStrategy.TryParseIngredient(context, _templates, out parseResult);
+        }
+
+        private string Sanitize(string input)
+        {
+            return _sanitizationRules.Aggregate(
+                input, 
+                (current, rule) => rule.Apply(current));
         }
         
         #region Builder
@@ -68,11 +74,9 @@ namespace RecipeIngredientParser.Core.Parser
         public class Builder
         {
             private string[] _templateDefinitions;
+            private IInputSanitizationRule[] _sanitizationRules;
             private ITokenReaderFactory _tokenReaderFactory;
-            private IParserStrategyFactory _parserStrategyFactory;
-
-            private ParserStrategyOption _strategyOption =
-                ParserStrategyOption.AcceptFirstFullMatch;
+            private IParserStrategy _parserStrategy;
             
             /// <summary>
             /// Gets a new builder instance to start the construction process.
@@ -84,11 +88,12 @@ namespace RecipeIngredientParser.Core.Parser
             /// </summary>
             public bool IsValid => 
                 _templateDefinitions != null && 
+                _sanitizationRules != null &&
                 _tokenReaderFactory != null &&
-                _parserStrategyFactory != null;
+                _parserStrategy != null;
             
             /// <summary>
-            /// Configures the parser to use the specified template definitions
+            /// Configures the parser to use the specified template definitions.
             /// </summary>
             /// <param name="templateDefinitions">
             /// A collection of template definitions (e.g. {amount} {unit} {ingredient}).
@@ -102,21 +107,17 @@ namespace RecipeIngredientParser.Core.Parser
             }
 
             /// <summary>
-            /// Configures the parser to use the specified parsing strategy option.
+            /// Configures the parser to use the specified sanitization rules.
             /// </summary>
-            /// <remarks>
-            /// By default, <see cref="ParserStrategyOption.AcceptFirstFullMatch"/> will be used
-            /// if not explicitly set during construction.
-            /// </remarks>
-            /// <param name="strategyOption">A parsing strategy option to use.</param>
-            /// <returns>A <see cref="Builder"/> instance with the parsing strategy option configured.</returns>
-            public Builder WithParserStrategy(ParserStrategyOption strategyOption)
+            /// <param name="sanitizationRules">A collection of sanitization rules.</param>
+            /// <returns>A <see cref="Builder"/> instance with the sanitization rules configured.</returns>  
+            public Builder WithSanitizationRules(params IInputSanitizationRule[] sanitizationRules)
             {
-                _strategyOption = strategyOption;
+                _sanitizationRules = sanitizationRules;
 
                 return this;
             }
-
+            
             /// <summary>
             /// Configures the parser to use the specified <see cref="ITokenReaderFactory"/>.
             /// </summary>
@@ -133,17 +134,13 @@ namespace RecipeIngredientParser.Core.Parser
             }
 
             /// <summary>
-            /// Configures the parser to use the specified <see cref="IParserStrategyFactory"/>.
+            /// Configures the parser to use the specified <see cref="IParserStrategy"/>.
             /// </summary>
-            /// <remarks>
-            /// The parser strategy factory will be used to get the correct parsing strategy based on
-            /// the configured <see cref="ParserStrategyOption"/>.
-            /// </remarks>
-            /// <param name="parserStrategyFactory">A <see cref="IParserStrategyFactory"/> instance.</param>
-            /// <returns>A <see cref="Builder"/> instance with the parser strategy factory configured.</returns>
-            public Builder WithParserStrategyFactory(IParserStrategyFactory parserStrategyFactory)
+            /// <param name="parserStrategy">A <see cref="IParserStrategy"/> instance.</param>
+            /// <returns>A <see cref="Builder"/> instance with the parser strategy configured.</returns>
+            public Builder WithParserStrategy(IParserStrategy parserStrategy)
             {
-                _parserStrategyFactory = parserStrategyFactory;
+                _parserStrategy = parserStrategy;
 
                 return this;
             }
@@ -166,8 +163,8 @@ namespace RecipeIngredientParser.Core.Parser
 
                 return new IngredientParser(
                     templates, 
-                    _strategyOption,
-                    _parserStrategyFactory);
+                    _sanitizationRules,
+                    _parserStrategy);
             }
 
             private Template CreateTemplate(string definition)

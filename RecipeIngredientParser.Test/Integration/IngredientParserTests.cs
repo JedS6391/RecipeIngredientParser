@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using RecipeIngredientParser.Core.Parser;
+using RecipeIngredientParser.Core.Parser.Sanitization;
+using RecipeIngredientParser.Core.Parser.Sanitization.Abstract;
 using RecipeIngredientParser.Core.Parser.Strategy;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
@@ -9,7 +11,7 @@ using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Integration
 {
     public class IngredientParserTests
     {
@@ -20,12 +22,16 @@ namespace RecipeIngredientParser.Test
             new FormTokenReader(),
             new IngredientTokenReader()
         };
-
-        private readonly IParserStrategy[] _parserStrategies =
+        
+        private readonly IInputSanitizationRule[] _sanitizationRules =
         {
-            new FirstFullMatchParserStrategy(),
-            new BestFullMatchParserStrategy(), 
-            new BestPartialMatchParserStrategy()
+            new RemoveExtraneousSpacesRule(),
+            new RangeSubstitutionRule(),
+            new RemoveBracketedTextRule(),
+            new RemoveAlternateIngredientsRule(),
+            new ReplaceUnicodeFractionsRule(),
+            new RemoveExtraneousSpacesRule(),
+            new ConvertToLowerCaseRule()
         };
         
         [Test]
@@ -41,8 +47,8 @@ namespace RecipeIngredientParser.Test
                 .New
                 .WithTemplateDefinitions(templateDefinition)
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
-                .WithParserStrategy(ParserStrategyOption.AcceptFirstFullMatch)
-                .WithParserStrategyFactory(new ParserStrategyFactory(_parserStrategies))
+                .WithParserStrategy(new FirstFullMatchParserStrategy())
+                .WithSanitizationRules(_sanitizationRules)
                 .Build();
 
             var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
@@ -70,7 +76,7 @@ namespace RecipeIngredientParser.Test
         [TestCaseSource(nameof(_multipleTemplateTestCases))]
         public void IngredientParser_TryReadIngredientWithMultipleTemplates_ShouldSuccessfullyParseIngredient(
             string[] templateDefinition,
-            ParserStrategyOption strategyOption,
+            IParserStrategy parserStrategy,
             string rawIngredient,
             Type[] expectedTokens,
             ParseResult expectedParsedResult)
@@ -80,8 +86,8 @@ namespace RecipeIngredientParser.Test
                 .New
                 .WithTemplateDefinitions(templateDefinition)
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
-                .WithParserStrategy(strategyOption)
-                .WithParserStrategyFactory(new ParserStrategyFactory(_parserStrategies))
+                .WithParserStrategy(parserStrategy)
+                .WithSanitizationRules(_sanitizationRules)
                 .Build();
 
             var result = parser.TryParseIngredient(rawIngredient, out var parseResult);
@@ -246,7 +252,7 @@ namespace RecipeIngredientParser.Test
                     TemplateDefinitions.AmountUnitIngredient
                 },
                 // Strategy option
-                ParserStrategyOption.AcceptFirstFullMatch,
+                new FirstFullMatchParserStrategy(), 
                 // Raw ingredient
                 "2 cups grated cheese",
                 // Expected tokens
@@ -284,7 +290,7 @@ namespace RecipeIngredientParser.Test
                     TemplateDefinitions.AmountUnitFormIngredient
                 },
                 // Strategy option
-                ParserStrategyOption.AcceptFirstFullMatch,
+                new FirstFullMatchParserStrategy(), 
                 // Raw ingredient
                 "2 cups grated cheese",
                 // Expected tokens
@@ -322,10 +328,10 @@ namespace RecipeIngredientParser.Test
                 new string[]
                 {
                     TemplateDefinitions.AmountUnitFormIngredient,
-                    TemplateDefinitions.AmountUnitIngredient,
+                    TemplateDefinitions.AmountUnitIngredient
                 },
                 // Strategy option
-                ParserStrategyOption.AcceptBestFullMatch,
+                new BestFullMatchParserStrategy(), 
                 // Raw ingredient
                 "2 cups grated cheese",
                 // Expected tokens
@@ -360,10 +366,10 @@ namespace RecipeIngredientParser.Test
                 new string[]
                 {
                     TemplateDefinitions.AmountUnitIngredient,
-                    TemplateDefinitions.AmountUnitFormIngredient,
+                    TemplateDefinitions.AmountUnitFormIngredient
                 },
                 // Strategy option
-                ParserStrategyOption.AcceptBestFullMatch,
+                new BestFullMatchParserStrategy(), 
                 // Raw ingredient
                 "2 cups grated cheese",
                 // Expected tokens

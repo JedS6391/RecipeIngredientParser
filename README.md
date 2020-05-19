@@ -1,6 +1,8 @@
 # Recipe ingredient parser
 
-A parser for recipe ingredients. 
+> *A parser for recipe ingredients.*
+
+[![nuget][nuget-image]][nuget-url]
 
 ## About 
 
@@ -46,3 +48,6 @@ An example console application is provided that can be used to test the parser o
 ```
 dotnet run --project RecipeIngredientParser.Example
 ```
+
+[nuget-image]: https://img.shields.io/nuget/v/RecipeIngredientParser.Core?style=flat-square
+[nuget-url]: https://www.nuget.org/packages/RecipeIngredientParser.Core/

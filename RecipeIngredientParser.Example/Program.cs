@@ -1,23 +1,22 @@
 ﻿using System;
+using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Extensions;
 using RecipeIngredientParser.Core.Parser.Strategy;
-using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
-using RecipeIngredientParser.Core.Tokens.Readers;
 
 namespace RecipeIngredientParser.Example
 {
     /// <summary>
     /// An example program to demonstrate the ingredient parser.
     /// </summary>
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var parser = CreateParser();
-            var input = string.Empty;
+            string input;
             
             while ((input = GetInput()) != "exit")
             {
@@ -41,6 +40,13 @@ namespace RecipeIngredientParser.Example
                         DisplayToken(token);
                     }
 
+                    var totalScore = parseResult
+                        .Metadata
+                        .Tokens
+                        .Sum(t => TokenWeightResolver.Invoke(t));
+                    
+                    Console.WriteLine($"Total score: {totalScore}");
+
                     Console.WriteLine();
                 }
                 else
@@ -61,83 +67,78 @@ namespace RecipeIngredientParser.Example
 
         private static IngredientParser CreateParser()
         {
-            var bestMatchHeuristic = BestMatchHeuristics.WeightedTokenHeuristic(token =>
-            {
-                switch (token)
-                {
-                    case LiteralToken _:
-                        return 0.0m;
-                    
-                    case LiteralAmountToken _:
-                    case FractionalAmountToken _:
-                    case RangeAmountToken _:
-                        return 1.0m;
-                    
-                    case UnitToken unitToken:
-                        return unitToken.Type == UnitType.Unknown ?
-                            // Punish unknown unit types
-                            -1.0m :
-                            1.0m;
-                    
-                    case FormToken _:
-                        return 1.0m;
-                    
-                    case IngredientToken _:
-                        return 2.0m;
-                }
-
-                return 0.0m;
-            });
-            
-            var parserStrategies = new IParserStrategy[]
-            {
-                new BestFullMatchParserStrategy(bestMatchHeuristic)
-            };
-
             return IngredientParser
                 .Builder
                 .New
                 .WithDefaultConfiguration()
-                .WithParserStrategy(ParserStrategyOption.AcceptBestFullMatch)
-                .WithParserStrategyFactory(new ParserStrategyFactory(parserStrategies))
+                .WithParserStrategy(new BestFullMatchParserStrategy(
+                    BestMatchHeuristics.WeightedTokenHeuristic(TokenWeightResolver)))
                 .Build();
         }
+        
+        private static Func<IToken, decimal> TokenWeightResolver => token =>
+        {
+            switch (token)
+            {
+                case LiteralToken literalToken:
+                    // Longer literals score more - the assumption being that
+                    // a longer literal means a more specific value.
+                    return 0.1m * literalToken.Value.Length;
+                    
+                case LiteralAmountToken _:
+                case FractionalAmountToken _:
+                case RangeAmountToken _:
+                    return 1.0m;
+                    
+                case UnitToken unitToken:
+                    return unitToken.Type == UnitType.Unknown ?
+                        // Punish unknown unit types
+                        -1.0m :
+                        1.0m;
+                    
+                case FormToken _:
+                    return 1.0m;
+                    
+                case IngredientToken _:
+                    return 2.0m;
+            }
+
+            return 0.0m;
+        };
 
         private static void DisplayToken(IToken token)
         {
-            var tokenOutput = $"{token.GetType().Name}({{0}})";
-
-            tokenOutput = token switch
+            var score = TokenWeightResolver.Invoke(token);
+            var tokenInfo = $"{token.GetType().Name}";
+            var valueInfo = "[value = {0}]";
+            var scoreInfo = $"[score = {score}]";
+            
+            valueInfo = token switch
             {
-                LiteralToken literalToken =>
-                    tokenOutput = string.Format(tokenOutput, $"'{literalToken.Value}'"),
+                LiteralToken literalToken => string.Format(valueInfo, $"'{literalToken.Value}'"),
 
-                LiteralAmountToken literalAmountToken =>
-                    tokenOutput = string.Format(tokenOutput, literalAmountToken.Amount),
+                LiteralAmountToken literalAmountToken => string.Format(valueInfo, literalAmountToken.Amount),
 
-                FractionalAmountToken fractionalAmountToken =>
-                    tokenOutput = string.Format(
-                        tokenOutput,
-                        $"{fractionalAmountToken.Numerator}/{fractionalAmountToken.Denominator}"),
+                FractionalAmountToken fractionalAmountToken => string.Format(
+                    valueInfo,
+                    $"{fractionalAmountToken.Numerator}/{fractionalAmountToken.Denominator}"),
 
-                RangeAmountToken rangeAmountToken =>
-                    tokenOutput = string.Format(
-                        tokenOutput,
-                        $"{rangeAmountToken.LowerBound}-{rangeAmountToken.UpperBound}"),
+                RangeAmountToken rangeAmountToken => string.Format(
+                    valueInfo,
+                    $"{rangeAmountToken.LowerBound}-{rangeAmountToken.UpperBound}"),
 
-                UnitToken unitToken =>
-                    tokenOutput = string.Format(tokenOutput, unitToken.Unit),
+                UnitToken unitToken => string.Format(valueInfo, unitToken.Unit),
 
-                FormToken formToken =>
-                    tokenOutput = string.Format(tokenOutput, formToken.Form),
+                FormToken formToken => string.Format(valueInfo, formToken.Form),
 
-                IngredientToken ingredientToken =>
-                    tokenOutput = string.Format(tokenOutput, ingredientToken.Ingredient),
+                IngredientToken ingredientToken => string.Format(valueInfo, ingredientToken.Ingredient),
                 
                 _ => string.Empty
             };
+            
+            var output = $"-> {tokenInfo}\n\t{valueInfo}\n\t{scoreInfo}";
 
-            Console.WriteLine($"-> {tokenOutput}");
+            Console.WriteLine(output);
         }
     }
 }

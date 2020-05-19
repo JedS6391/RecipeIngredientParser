@@ -6,11 +6,11 @@ using RecipeIngredientParser.Core.Templates;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Abstract;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Unit
 {
     public class BestMatchHeuristicTests
     {
-        private static readonly ParseResult.ParseMetadata[] Matches = new[]
+        private static readonly ParseResult.ParseMetadata[] Matches =
         {
             new ParseResult.ParseMetadata()
             {

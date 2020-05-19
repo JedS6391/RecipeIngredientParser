@@ -34,6 +34,8 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
                 if (context.Buffer.HasNext() && context.Buffer.Peek() == t)
                 {
                     context.Buffer.Consume(t);
+
+                    value.Append(t);
                 }
                 else
                 {

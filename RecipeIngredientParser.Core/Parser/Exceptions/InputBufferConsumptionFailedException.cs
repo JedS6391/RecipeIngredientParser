@@ -1,3 +1,5 @@
+using RecipeIngredientParser.Core.Parser.Context;
+
 namespace RecipeIngredientParser.Core.Parser.Exceptions
 {
     /// <summary>

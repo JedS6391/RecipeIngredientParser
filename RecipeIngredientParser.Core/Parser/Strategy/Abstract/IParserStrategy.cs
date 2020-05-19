@@ -10,15 +10,6 @@ namespace RecipeIngredientParser.Core.Parser.Strategy.Abstract
     public interface IParserStrategy
     {
         /// <summary>
-        /// Determines whether this strategy handles the supplied option.
-        /// </summary>
-        /// <param name="strategyOption">The strategy option.</param>
-        /// <returns>
-        /// <see langword="true"/> if this can handle the strategy option; <see langword="false"/> otherwise.
-        /// </returns>
-        bool Handles(ParserStrategyOption strategyOption);
-        
-        /// <summary>
         /// Attempts to parse an ingredient from the context based on a set of templates. 
         /// </summary>
         /// <param name="context">The context to parse an ingredient from.</param>

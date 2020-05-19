@@ -4,7 +4,7 @@ using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Tokens;
 using RecipeIngredientParser.Core.Tokens.Readers;
 
-namespace RecipeIngredientParser.Test
+namespace RecipeIngredientParser.Test.Unit
 {
     public class AmountTokenReaderTests
     {
@@ -66,7 +66,7 @@ namespace RecipeIngredientParser.Test
         [Test]
         public void AmountTokenReader_TryReadInvalidAmount_ShouldNotReadTokenSuccessfully()
         {
-            var rawIngredient = $"test cups grated carrot";
+            const string rawIngredient = "test cups grated carrot";
             var context = new ParserContext(rawIngredient);
 
             var result = _amountTokenReader.TryReadToken(context, out var token);
