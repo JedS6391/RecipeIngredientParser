@@ -15,7 +15,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
     /// Note that only the best full match will be returned.
     /// </remarks>
     public class BestFullMatchParserStrategy : IParserStrategy
-    {
+    {       
         private readonly BestMatchHeuristic _bestMatchHeuristic;
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
             ParserContext context,
             IEnumerable<Template> templates,
             out ParseResult parseResult)
-        {
+        {                  
             var fullMatches = FindFullMatches(context, templates);
 
             if (fullMatches.Any())

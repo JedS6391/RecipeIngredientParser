@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Extensions;
@@ -13,7 +13,7 @@ namespace RecipeIngredientParser.Example
     /// </summary>
     public class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var parser = CreateParser();
             string input;

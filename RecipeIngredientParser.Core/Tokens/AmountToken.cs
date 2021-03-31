@@ -28,12 +28,68 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Defines the base structure of an amount token.
     /// </summary>
-    public interface IAmountToken : IToken
+    public abstract class AmountToken : IToken
     {
         /// <summary>
         /// Gets the type of amount the token represents.
         /// </summary>
-        AmountTokenType Type { get; }
+        public abstract AmountTokenType Type { get; }
+
+        /// <inheritdoc/>
+        public abstract void Accept(ParserTokenVisitor parserTokenVisitor);
+
+        /// <summary>
+        /// Creates a <see cref="LiteralAmountToken"/> instance.
+        /// </summary>
+        /// <param name="amount">The amount this literal token represents.</param>
+        /// <returns>A <see cref="LiteralAmountToken"/> instance.</returns>
+        public static LiteralAmountToken Literal(decimal amount) => new (amount);
+
+        /// <summary>
+        /// Creates a <see cref="FractionalAmountToken"/> instance.
+        /// </summary>
+        /// <param name="wholeNumber">
+        /// A <see cref="LiteralAmountToken"/> representing the whole number component of the fraction.
+        /// </param>
+        /// <param name="numerator">
+        /// A <see cref="LiteralAmountToken"/> representing the numerator component of the fraction.
+        /// </param>
+        /// <param name="denominator">
+        /// A <see cref="LiteralAmountToken"/> representing the denominator component of the fraction.
+        /// </param>
+        /// <returns>A <see cref="FractionalAmountToken"/> instance.</returns>
+        public static FractionalAmountToken Fraction(
+            LiteralAmountToken wholeNumber,
+            LiteralAmountToken numerator,
+            LiteralAmountToken denominator) => new(wholeNumber, numerator, denominator);
+
+        /// <summary>
+        /// Creates a <see cref="RangeAmountToken"/> instance for a fractional range (e.g. 1/4-1/3)
+        /// </summary>
+        /// <param name="lowerBound">
+        /// A <see cref="FractionalAmountToken"/> representing the lower bound of the range.
+        /// </param>
+        /// <param name="upperBound">
+        /// A <see cref="FractionalAmountToken"/> representing the upper bound of the range.
+        /// </param>
+        /// <returns>A <see cref="RangeAmountToken"/> instance.</returns>
+        public static RangeAmountToken Range(
+            FractionalAmountToken lowerBound,
+            FractionalAmountToken upperBound) => new(lowerBound, upperBound);
+
+        /// <summary>
+        /// Creates a <see cref="RangeAmountToken"/> instance for a literal range (e.g. 1-2)
+        /// </summary>
+        /// <param name="lowerBound">
+        /// A <see cref="LiteralAmountToken"/> representing the lower bound of the range.
+        /// </param>
+        /// <param name="upperBound">
+        /// A <see cref="LiteralAmountToken"/> representing the upper bound of the range.
+        /// </param>
+        /// <returns>A <see cref="RangeAmountToken"/> instance.</returns>
+        public static RangeAmountToken Range(
+            LiteralAmountToken lowerBound,
+            LiteralAmountToken upperBound) => new(lowerBound, upperBound);
     }
 
     #endregion
@@ -43,133 +99,118 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Represents a literal amount token.
     /// </summary>
-    public class LiteralAmountToken : IAmountToken
+    public sealed class LiteralAmountToken : AmountToken
     {
         /// <summary>
-        /// Gets or sets the amount (e.g. 1, 42, etc).
+        /// Gets or sets the amount (e.g. 1, 42, 3.6, etc).
         /// </summary>
-        public int Amount { get; set; }
+        public decimal Amount { get; private set; }
 
         /// <inheritdoc/>
-        public AmountTokenType Type => AmountTokenType.Literal;
-        
+        public override AmountTokenType Type => AmountTokenType.Literal;
+
+        internal LiteralAmountToken(decimal amount)
+        {
+            Amount = amount;
+        }
+
         /// <inheritdoc/>
-        public void Accept(ParserTokenVisitor parserTokenVisitor)
+        public override void Accept(ParserTokenVisitor parserTokenVisitor)
         {
             parserTokenVisitor.Visit(this);
         }
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{nameof(LiteralAmountToken)}({Amount})";
     }
 
     /// <summary>
     /// Represents a fractional amount token.
     /// </summary>
-    public class FractionalAmountToken : IAmountToken
+    public sealed class FractionalAmountToken : AmountToken
     {
         /// <summary>
-        /// Gets or sets the numerator of the fraction.
+        /// Gets or sets the whole number component of the fraction, if it is a mixed number.
         /// </summary>
-        public int Numerator { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the numerator of the fraction.
-        /// </summary>
-        public int Denominator { get; set; }
-        
-        /// <inheritdoc/>
-        public AmountTokenType Type => AmountTokenType.Fraction;
+        /// <remarks>Will be <see langword="null"/> when the value is not a mixed number.</remarks>
+        public LiteralAmountToken WholeNumber { get; private set; }
 
         /// <summary>
-        /// Attempts to create a <see cref="FractionalAmountToken"/> instance from a raw amount.
+        /// Gets or sets the numerator component of the fraction.
         /// </summary>
-        /// <param name="rawAmount">The raw amount to create a <see cref="FractionalAmountToken"/> from.</param>
-        /// <param name="fractionalAmountToken">
-        /// When this method returns, contains a <see cref="FractionalAmountToken"/> that represents
-        /// the provided raw amount when the parsing succeeded, or <see langword="null"/> if the parsing failed.
-        /// </param>
-        /// <returns>
-        /// <see langword="true"/> when the token read succeeded; <see langword="false"/> otherwise.
-        /// </returns>
-        public static bool TryParse(string rawAmount, out FractionalAmountToken fractionalAmountToken)
+        public LiteralAmountToken Numerator { get; private set; }
+        
+        /// <summary>
+        /// Gets or sets the denominator component of the fraction.
+        /// </summary>
+        public LiteralAmountToken  Denominator { get; private set; }
+        
+        /// <inheritdoc/>
+        public override AmountTokenType Type => AmountTokenType.Fraction;
+
+        internal FractionalAmountToken(
+            LiteralAmountToken wholeNumber,
+            LiteralAmountToken numerator,
+            LiteralAmountToken denominator)
         {
-            if (rawAmount.Contains("/"))
-            {
-                var parts = rawAmount.Split('/');
-
-                fractionalAmountToken = new FractionalAmountToken()
-                {
-                    Numerator = int.Parse(parts[0]),
-                    Denominator = int.Parse(parts[1])
-                };
-
-                return true;
-            }
-
-            fractionalAmountToken = null;
-            
-            return false;
+            WholeNumber = wholeNumber;
+            Numerator = numerator;
+            Denominator = denominator;
         }
-        
+
         /// <inheritdoc/>
-        public void Accept(ParserTokenVisitor parserTokenVisitor)
+        public override void Accept(ParserTokenVisitor parserTokenVisitor)
         {
             parserTokenVisitor.Visit(this);
         }
+
+        /// <inheritdoc/>
+        public override string ToString() => WholeNumber != null ?
+            $"{nameof(FractionalAmountToken)}({WholeNumber} {Numerator}/{Denominator})" :
+            $"{nameof(FractionalAmountToken)}({Numerator}/{Denominator})"; 
     }
-    
+
     /// <summary>
     /// Represents a range amount token.
     /// </summary>
-    public class RangeAmountToken : IAmountToken
+    /// <remarks>
+    /// A range amount token can either represent a fractional range (e.g. 1/4-1/3) or a literal range (e.g. 1-2).
+    /// </remarks>
+    public sealed class RangeAmountToken : AmountToken
     {
         /// <summary>
         /// Gets or sets the lower bound of the range.
         /// </summary>
-        public int LowerBound { get; set; }
+        public AmountToken LowerBound { get; private set; }
         
         /// <summary>
         /// Gets or sets the lower bound of the range.
         /// </summary>
-        public int UpperBound { get; set; }
+        public AmountToken UpperBound { get; private set; }
         
         /// <inheritdoc/>
-        public AmountTokenType Type => AmountTokenType.Range;
-        
-        /// <summary>
-        /// Attempts to create a <see cref="RangeAmountToken"/> instance from a raw amount.
-        /// </summary>
-        /// <param name="rawAmount">The raw amount to create a <see cref="RangeAmountToken"/> from.</param>
-        /// <param name="rangeAmountToken">
-        /// When this method returns, contains a <see cref="RangeAmountToken"/> that represents
-        /// the provided raw amount when the parsing succeeded, or <see langword="null"/> if the parsing failed.
-        /// </param>
-        /// <returns>
-        /// <see langword="true"/> when the token read succeeded; <see langword="false"/> otherwise.
-        /// </returns>
-        public static bool TryParse(string rawAmount, out RangeAmountToken rangeAmountToken)
+        public override AmountTokenType Type => AmountTokenType.Range;
+
+        internal RangeAmountToken(FractionalAmountToken lowerBound, FractionalAmountToken upperBound)
         {
-            if (rawAmount.Contains("-"))
-            {
-                var parts = rawAmount.Split('-');
-                
-                rangeAmountToken = new RangeAmountToken()
-                {
-                    LowerBound = int.Parse(parts[0]),
-                    UpperBound = int.Parse(parts[1])
-                };
+            LowerBound = lowerBound;
+            UpperBound = upperBound;
+        }
 
-                return true;
-            }
+        internal RangeAmountToken(LiteralAmountToken lowerBound, LiteralAmountToken upperBound)
+        {
+            LowerBound = lowerBound;
+            UpperBound = upperBound;
+        }
 
-            rangeAmountToken = null;
-            
-            return false;
-        }        
-        
         /// <inheritdoc/>
-        public void Accept(ParserTokenVisitor parserTokenVisitor)
+        public override void Accept(ParserTokenVisitor parserTokenVisitor)
         {
             parserTokenVisitor.Visit(this);
         }
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{nameof(RangeAmountToken)}({LowerBound}-{UpperBound})";
     }
 
     #endregion
@@ -196,7 +237,9 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="FractionalAmountToken"/> instance.</param>
         public void Visit(FractionalAmountToken token)
         {
-            _parseResult.Details.Amount = $"{token.Numerator}/{token.Denominator}";
+            _parseResult.Details.Amount = token.WholeNumber != null ?
+                $"{token.WholeNumber.Amount} {token.Numerator.Amount}/{token.Denominator.Amount}" :
+                $"{token.Numerator.Amount}/{token.Denominator.Amount}"; ;
         }
         
         /// <summary>
@@ -205,7 +248,15 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <param name="token">A <see cref="RangeAmountToken"/> instance.</param>
         public void Visit(RangeAmountToken token)
         {
-            _parseResult.Details.Amount = $"{token.LowerBound}-{token.UpperBound}";
+            // A range token has two nested tokens, so we visit the first and store
+            // the value before visiting the second. This allows us to combine the two values.
+            token.LowerBound.Accept(this);
+
+            var lowerBoundAmount = _parseResult.Details.Amount;
+
+            token.UpperBound.Accept(this);
+
+            _parseResult.Details.Amount = $"{lowerBoundAmount}-{_parseResult.Details.Amount}";
         }
     }
 
