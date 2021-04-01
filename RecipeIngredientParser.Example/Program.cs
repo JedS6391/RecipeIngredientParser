@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using RecipeIngredientParser.Core.Parser;
 using RecipeIngredientParser.Core.Parser.Extensions;
@@ -13,7 +13,7 @@ namespace RecipeIngredientParser.Example
     /// </summary>
     public class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var parser = CreateParser();
             string input;
@@ -118,14 +118,10 @@ namespace RecipeIngredientParser.Example
                 LiteralToken literalToken => string.Format(valueInfo, $"'{literalToken.Value}'"),
 
                 LiteralAmountToken literalAmountToken => string.Format(valueInfo, literalAmountToken.Amount),
-
-                FractionalAmountToken fractionalAmountToken => string.Format(
-                    valueInfo,
-                    $"{fractionalAmountToken.Numerator}/{fractionalAmountToken.Denominator}"),
-
-                RangeAmountToken rangeAmountToken => string.Format(
-                    valueInfo,
-                    $"{rangeAmountToken.LowerBound}-{rangeAmountToken.UpperBound}"),
+                
+                FractionalAmountToken fractionalAmountToken => string.Format(valueInfo, GetRepresentation(fractionalAmountToken)),
+                
+                RangeAmountToken rangeAmountToken => string.Format(valueInfo, GetRepresentation(rangeAmountToken)),
 
                 UnitToken unitToken => string.Format(valueInfo, unitToken.Unit),
 
@@ -139,6 +135,25 @@ namespace RecipeIngredientParser.Example
             var output = $"-> {tokenInfo}\n\t{valueInfo}\n\t{scoreInfo}";
 
             Console.WriteLine(output);
+        }
+
+        private static string GetRepresentation(FractionalAmountToken fraction) =>
+            fraction.WholeNumber != null ?
+                $"{fraction.WholeNumber.Amount} {fraction.Numerator.Amount}/{fraction.Denominator.Amount}" :
+                $"{fraction.Numerator.Amount}/{fraction.Denominator.Amount}";
+
+        private static string GetRepresentation(RangeAmountToken range)
+        {
+            return (range.LowerBound, range.UpperBound) switch
+            {
+                (LiteralAmountToken lowerBound, LiteralAmountToken upperBound) =>
+                    $"{lowerBound.Amount}-{upperBound.Amount}",
+
+                (FractionalAmountToken lowerBound, FractionalAmountToken upperBound) =>
+                    $"{GetRepresentation(lowerBound)}-{GetRepresentation(upperBound)}",
+
+                _ => throw new InvalidOperationException($"Unexpected range lower bound token type: {range.LowerBound.Type}")
+            };
         }
     }
 }

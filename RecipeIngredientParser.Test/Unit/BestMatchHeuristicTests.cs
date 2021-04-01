@@ -17,7 +17,7 @@ namespace RecipeIngredientParser.Test.Unit
                 Tokens = new IToken[]
                 {
                     new LiteralToken(),
-                    new LiteralAmountToken(),
+                    AmountToken.Literal(1m),
                     new LiteralToken(),
                     new UnitToken(),
                     new LiteralToken(),
@@ -33,7 +33,7 @@ namespace RecipeIngredientParser.Test.Unit
                 Tokens = new IToken[]
                 {
                     new LiteralToken(),
-                    new LiteralAmountToken(),
+                    AmountToken.Literal(1m),
                     new LiteralToken(),
                     new UnitToken(),
                     new LiteralToken(),

@@ -5,7 +5,7 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Represents a literal token.
     /// </summary>
-    public class LiteralToken : IToken
+    public sealed class LiteralToken : IToken
     {
         /// <summary>
         /// Gets or sets the literal value.

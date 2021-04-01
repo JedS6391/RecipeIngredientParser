@@ -5,7 +5,7 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Represents an ingredient token.
     /// </summary>
-    public class IngredientToken : IToken
+    public sealed class IngredientToken : IToken
     {
         /// <summary>
         /// Gets or sets the ingredient.

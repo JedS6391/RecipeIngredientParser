@@ -33,5 +33,14 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         /// <see langword="true"/> when the next character is whitespace; <see langword="false"/> otherwise.
         /// </returns>
         public static bool IsWhitespace(this InputBuffer buffer) => buffer.Matches(char.IsWhiteSpace);
+
+        /// <summary>
+        /// Optionally consumes the specified character.
+        /// </summary>
+        /// <param name="buffer">The input buffer to consume the character from.</param>
+        /// <param name="characterToConsume">The character to consume.</param>
+        /// <returns><see langword="true"/> regardless of whether the character was consumed or not.</returns>
+        public static bool OptionallyConsume(this InputBuffer buffer, char characterToConsume) =>
+            buffer.TryConsume(characterToConsume) || true;       
     }
 }

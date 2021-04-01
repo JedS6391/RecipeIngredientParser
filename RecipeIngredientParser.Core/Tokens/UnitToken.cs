@@ -26,7 +26,12 @@ namespace RecipeIngredientParser.Core.Tokens
         /// A gram.
         /// </summary>
         Gram,
-        
+
+        /// <summary>
+        /// A kilogram.
+        /// </summary>
+        Kilogram,
+
         /// <summary>
         /// A handful.
         /// </summary>
@@ -50,7 +55,7 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <summary>
         /// A pound.
         /// </summary>
-        Pound,
+        Pound,       
         
         /// <summary>
         /// A catch-all for unknown unit types.
@@ -61,7 +66,7 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Represents a unit token.
     /// </summary>
-    public class UnitToken : IToken
+    public sealed class UnitToken : IToken
     {
         /// <summary>
         /// Gets or sets the unit.

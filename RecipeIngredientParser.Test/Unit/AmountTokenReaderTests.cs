@@ -28,9 +28,25 @@ namespace RecipeIngredientParser.Test.Unit
             
             Assert.IsTrue(result);
             Assert.IsInstanceOf<LiteralAmountToken>(token);
-            Assert.AreEqual(((LiteralAmountToken) token).Amount, amount);
+            Assert.AreEqual(amount, (token as LiteralAmountToken).Amount);
         }
-        
+
+        [Test]
+        [TestCase("1.5")]
+        [TestCase("0.25")]
+        [TestCase(".5")]
+        public void AmountTokenReader_TryReadDecimalLiteralAmount_ShouldReadTokenSuccessfully(string amount)
+        {
+            var rawIngredient = $"{amount} cups grated carrot";
+            var context = new ParserContext(rawIngredient);
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<LiteralAmountToken>(token);
+            Assert.AreEqual(decimal.Parse(amount), (token as LiteralAmountToken).Amount);
+        }
+
         [Test]
         public void AmountTokenReader_TryReadFractionalAmount_ShouldReadTokenSuccessfully()
         {
@@ -43,15 +59,52 @@ namespace RecipeIngredientParser.Test.Unit
             
             Assert.IsTrue(result);
             Assert.IsInstanceOf<FractionalAmountToken>(token);
-            Assert.AreEqual(((FractionalAmountToken) token).Numerator, numerator);
-            Assert.AreEqual(((FractionalAmountToken) token).Denominator, denominator);
+            Assert.AreEqual(null, (token as FractionalAmountToken).WholeNumber);
+            Assert.AreEqual(numerator, (token as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(denominator, (token as FractionalAmountToken).Denominator.Amount);
         }
-        
+
         [Test]
-        public void AmountTokenReader_TryReadRangeAmount_ShouldReadTokenSuccessfully()
+        public void AmountTokenReader_TryReadMixedNumberWithSpaceFractionalAmount_ShouldReadTokenSuccessfully()
         {
-            var lowerBound = Random.Next(0, 20);
-            var upperBound = Random.Next(0, 20);
+            var wholeNumber = Random.Next(0, 20);
+            var numerator = Random.Next(0, 20);
+            var denominator = Random.Next(0, 20);
+            var rawIngredient = $"{wholeNumber} {numerator}/{denominator} cups grated carrot";
+            var context = new ParserContext(rawIngredient);
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<FractionalAmountToken>(token);
+            Assert.AreEqual(wholeNumber, (token as FractionalAmountToken).WholeNumber.Amount);
+            Assert.AreEqual(numerator, (token as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(denominator, (token as FractionalAmountToken).Denominator.Amount);
+        }
+
+        [Test]
+        public void AmountTokenReader_TryReadMixedNumberWithDashFractionalAmount_ShouldReadTokenSuccessfully()
+        {
+            var wholeNumber = Random.Next(0, 20);
+            var numerator = Random.Next(0, 20);
+            var denominator = Random.Next(0, 20);
+            var rawIngredient = $"{wholeNumber}-{numerator}/{denominator} cups grated carrot";
+            var context = new ParserContext(rawIngredient);
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<FractionalAmountToken>(token);
+            Assert.AreEqual(wholeNumber, (token as FractionalAmountToken).WholeNumber.Amount);
+            Assert.AreEqual(numerator, (token as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(denominator, (token as FractionalAmountToken).Denominator.Amount);
+        }
+
+        [Test]
+        [TestCase("1", "2")]
+        [TestCase("1.5", "2.75")]
+        public void AmountTokenReader_TryReadRangeAmountWithTwoLiteralBounds_ShouldReadTokenSuccessfully(string lowerBound, string upperBound)
+        {
             var rawIngredient = $"{lowerBound}-{upperBound} cups grated carrot";
             var context = new ParserContext(rawIngredient);
 
@@ -59,14 +112,108 @@ namespace RecipeIngredientParser.Test.Unit
             
             Assert.IsTrue(result);
             Assert.IsInstanceOf<RangeAmountToken>(token);
-            Assert.AreEqual(((RangeAmountToken) token).LowerBound, lowerBound);
-            Assert.AreEqual(((RangeAmountToken) token).UpperBound, upperBound);
+
+            var lowerBoundToken = (token as RangeAmountToken).LowerBound;
+            var upperBoundToken = (token as RangeAmountToken).UpperBound;
+
+            Assert.IsInstanceOf<LiteralAmountToken>(lowerBoundToken);
+            Assert.IsInstanceOf<LiteralAmountToken>(upperBoundToken);
+
+            Assert.AreEqual(decimal.Parse(lowerBound), (lowerBoundToken as LiteralAmountToken).Amount);
+            Assert.AreEqual(decimal.Parse(upperBound), (upperBoundToken as LiteralAmountToken).Amount);            
         }
-        
+
         [Test]
-        public void AmountTokenReader_TryReadInvalidAmount_ShouldNotReadTokenSuccessfully()
+        [TestCase("1", "2")]
+        [TestCase("1.5", "2.75")]
+        public void AmountTokenReader_TryReadRangeAmountWithTwoLiteralBoundsWithSpacesAroundDelimiter_ShouldReadTokenSuccessfully(string lowerBound, string upperBound)
         {
-            const string rawIngredient = "test cups grated carrot";
+            var rawIngredient = $"{lowerBound} - {upperBound} cups grated carrot";
+            var context = new ParserContext(rawIngredient);
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<RangeAmountToken>(token);
+
+            var lowerBoundToken = (token as RangeAmountToken).LowerBound;
+            var upperBoundToken = (token as RangeAmountToken).UpperBound;
+
+            Assert.IsInstanceOf<LiteralAmountToken>(lowerBoundToken);
+            Assert.IsInstanceOf<LiteralAmountToken>(upperBoundToken);
+
+            Assert.AreEqual(decimal.Parse(lowerBound), (lowerBoundToken as LiteralAmountToken).Amount);
+            Assert.AreEqual(decimal.Parse(upperBound), (upperBoundToken as LiteralAmountToken).Amount);
+        }
+
+        [Test]
+        public void AmountTokenReader_TryReadRangeAmountWithTwoFractionalBounds_ShouldReadTokenSuccessfully()
+        {
+            const int numerator = 1;
+            const int lowerBoundDenominator = 4;
+            const int upperBoundDenominator = 3;
+
+            var lowerBound = $"{numerator}/{lowerBoundDenominator}";
+            var upperBound = $"{numerator}/{upperBoundDenominator}";
+            var rawIngredient = $"{lowerBound}-{upperBound} cups grated carrot";
+            var context = new ParserContext(rawIngredient);            
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<RangeAmountToken>(token);
+
+            var lowerBoundToken = (token as RangeAmountToken).LowerBound;
+            var upperBoundToken = (token as RangeAmountToken).UpperBound;
+
+            Assert.IsInstanceOf<FractionalAmountToken>(lowerBoundToken);
+            Assert.IsInstanceOf<FractionalAmountToken>(upperBoundToken);
+
+            Assert.AreEqual(numerator, (lowerBoundToken as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(lowerBoundDenominator, (lowerBoundToken as FractionalAmountToken).Denominator.Amount);
+            Assert.AreEqual(numerator, (upperBoundToken as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(upperBoundDenominator, (upperBoundToken as FractionalAmountToken).Denominator.Amount);
+        }
+
+        [Test]
+        public void AmountTokenReader_TryReadRangeAmountWithTwoFractionalBoundsWithSpacesAroundDelimiter_ShouldReadTokenSuccessfully()
+        {
+            const int numerator = 1;
+            const int lowerBoundDenominator = 4;
+            const int upperBoundDenominator = 3;
+
+            var lowerBound = $"{numerator}/{lowerBoundDenominator}";
+            var upperBound = $"{numerator}/{upperBoundDenominator}";
+            var rawIngredient = $"{lowerBound} - {upperBound} cups grated carrot";
+            var context = new ParserContext(rawIngredient);
+
+            var result = _amountTokenReader.TryReadToken(context, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsInstanceOf<RangeAmountToken>(token);
+
+            var lowerBoundToken = (token as RangeAmountToken).LowerBound;
+            var upperBoundToken = (token as RangeAmountToken).UpperBound;
+
+            Assert.IsInstanceOf<FractionalAmountToken>(lowerBoundToken);
+            Assert.IsInstanceOf<FractionalAmountToken>(upperBoundToken);
+
+            Assert.AreEqual(numerator, (lowerBoundToken as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(lowerBoundDenominator, (lowerBoundToken as FractionalAmountToken).Denominator.Amount);
+            Assert.AreEqual(numerator, (upperBoundToken as FractionalAmountToken).Numerator.Amount);
+            Assert.AreEqual(upperBoundDenominator, (upperBoundToken as FractionalAmountToken).Denominator.Amount);
+        }
+
+        [Test]
+        [TestCase("test")]
+        [TestCase("1..2")]
+        [TestCase("1/t")]
+        [TestCase("1-t")]
+        [TestCase("1-1/t")]
+        [TestCase("1/3-1")]
+        public void AmountTokenReader_TryReadInvalidAmount_ShouldNotReadTokenSuccessfully(string amount)
+        {
+            var rawIngredient = $"{amount} cups grated carrot";
             var context = new ParserContext(rawIngredient);
 
             var result = _amountTokenReader.TryReadToken(context, out var token);
