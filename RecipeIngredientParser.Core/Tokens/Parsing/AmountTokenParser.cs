@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Extensions;
@@ -96,10 +97,10 @@ namespace RecipeIngredientParser.Core.Tokens.Parsing
             return true;
         }
 
-        private bool ExecuteRules<T>(Func<ParserRule[]> rulesProvider, InputBuffer buffer, out T token)
+        private bool ExecuteRules<T>(Func<IEnumerable<ParserRule>> rulesProvider, InputBuffer buffer, out T token)
             where T : class, IToken
         {
-            ParserRule[] rules = rulesProvider.Invoke();
+            var rules = rulesProvider.Invoke();
 
             // We attempt to parse using each provided rule, backtracking to the 
             // checkpoint if the rule fails to match against the input.
