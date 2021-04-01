@@ -22,6 +22,9 @@
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
       <LangVersion>9.0</LangVersion>
     </PropertyGroup>
+    <ItemGroup>
+      <Folder Include="Tokens\Parsing\" />
+    </ItemGroup>
     <ProjectExtensions>
       <MonoDevelop>
         <Properties>
