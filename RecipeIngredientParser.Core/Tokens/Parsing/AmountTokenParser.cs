@@ -15,7 +15,7 @@ namespace RecipeIngredientParser.Core.Tokens.Parsing
     ///
     ///   amount:   range | fraction | literal;
     ///   range:    fraction-fraction | literal-literal;
-    ///   fraction: literal-literal/literal literal literal/literal | literal/literal;
+    ///   fraction: literal-literal/literal | literal literal/literal | literal/literal;
     ///   literal:  decimal;
     ///
     /// Some examples of supported amounts:

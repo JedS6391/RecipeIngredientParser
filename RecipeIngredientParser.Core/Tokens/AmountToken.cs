@@ -109,6 +109,10 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <inheritdoc/>
         public override AmountTokenType Type => AmountTokenType.Literal;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LiteralAmountToken"/> class.
+        /// </summary>
+        /// <param name="amount">The amount this literal represents.</param>
         internal LiteralAmountToken(decimal amount)
         {
             Amount = amount;
@@ -148,6 +152,12 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <inheritdoc/>
         public override AmountTokenType Type => AmountTokenType.Fraction;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FractionalAmountToken"/> class.
+        /// </summary>
+        /// <param name="wholeNumber">The whole number component of the fraction, if any.</param>
+        /// <param name="numerator">The numerator component of the fraction.</param>
+        /// <param name="denominator">The denominator component of the fraction.</param>
         internal FractionalAmountToken(
             LiteralAmountToken wholeNumber,
             LiteralAmountToken numerator,
@@ -191,13 +201,31 @@ namespace RecipeIngredientParser.Core.Tokens
         /// <inheritdoc/>
         public override AmountTokenType Type => AmountTokenType.Range;
 
-        internal RangeAmountToken(FractionalAmountToken lowerBound, FractionalAmountToken upperBound)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RangeAmountToken"/> class.
+        /// </summary>
+        /// <param name="lowerBound">
+        /// A <see cref="LiteralAmountToken"/> instance representing the lower bound of the range.
+        /// </param>
+        /// <param name="upperBound">
+        /// A <see cref="LiteralAmountToken"/> instance representing the upper bound of the range.
+        /// </param>
+        internal RangeAmountToken(LiteralAmountToken lowerBound, LiteralAmountToken upperBound)
         {
             LowerBound = lowerBound;
             UpperBound = upperBound;
         }
 
-        internal RangeAmountToken(LiteralAmountToken lowerBound, LiteralAmountToken upperBound)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RangeAmountToken"/> class.
+        /// </summary>
+        /// <param name="lowerBound">
+        /// A <see cref="FractionalAmountToken"/> instance representing the lower bound of the range.
+        /// </param>
+        /// <param name="upperBound">
+        /// A <see cref="FractionalAmountToken"/> instance representing the upper bound of the range.
+        /// </param>
+        internal RangeAmountToken(FractionalAmountToken lowerBound, FractionalAmountToken upperBound)
         {
             LowerBound = lowerBound;
             UpperBound = upperBound;

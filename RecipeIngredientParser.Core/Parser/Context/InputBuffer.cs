@@ -72,7 +72,7 @@ namespace RecipeIngredientParser.Core.Parser.Context
         /// </remarks>
         /// <param name="offset">The number of characters from the current position to start reading.</param>
         /// <param name="count">The number of characters to read.</param>
-        /// <returns></returns>
+        /// <returns>An <see cref="IEnumerable{T}"/> for the characters that have been read.</returns>
         public IEnumerable<char> Peek(int offset, int count)
         {
             foreach (var position in Enumerable.Range(_position + offset, count))
@@ -202,6 +202,7 @@ namespace RecipeIngredientParser.Core.Parser.Context
         ///     buffer.Consume('b');
         ///     buffer.Consume('c');
         ///
+        ///     // Changes will not be undone.
         ///     checkpoint.Commit();
         /// }        
         /// </code>
@@ -241,7 +242,7 @@ namespace RecipeIngredientParser.Core.Parser.Context
             /// Marks the checkpoint as committed.
             /// </summary>
             /// <remarks>
-            /// A committed checkpoint won't be rewinded when the <see cref="InputBufferCheckpoint"/>
+            /// A committed checkpoint won't be rewinded when the <see cref="InputBufferCheckpoint"/> is disposed.
             /// </remarks>
             public void Commit()
             {

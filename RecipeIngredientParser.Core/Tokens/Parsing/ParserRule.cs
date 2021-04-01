@@ -158,7 +158,7 @@ namespace RecipeIngredientParser.Core.Tokens.Parsing
     /// </remarks>
     public class SequenceParserRule : ParserRule
     {
-        private readonly IReadOnlyList<ParserRule> _rules;
+        private readonly IEnumerable<ParserRule> _rules;
         private readonly Func<List<IToken>, ParserRuleResult> _mapper;
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace RecipeIngredientParser.Core.Tokens.Parsing
         /// A mapper for building a <see cref="ParserRuleResult"/> instance when all rules succeed.
         /// </param>
         internal SequenceParserRule(
-            IReadOnlyList<ParserRule> rules,
+            IEnumerable<ParserRule> rules,
             Func<List<IToken>, ParserRuleResult> mapper)
             : base()
         {
