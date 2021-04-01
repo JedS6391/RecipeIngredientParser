@@ -12,6 +12,9 @@ using RecipeIngredientParser.Core.Tokens.Readers;
 
 namespace RecipeIngredientParser.Documentation
 {
+    /// <summary>
+    /// Contains samples for the documentation.
+    /// </summary>
     public class Program
     {
         public static int Main(

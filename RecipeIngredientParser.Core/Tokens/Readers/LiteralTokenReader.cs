@@ -16,12 +16,18 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         public string TokenType { get; }
 
         /// <summary>
+        /// Gets the actual value of the literal the token reader is responsible for.
+        /// </summary>
+        public string Value { get; }
+
+        /// <summary>
         /// Initialises a new instance of the <see cref="LiteralTokenReader"/> class.
         /// </summary>
         /// <param name="value">The literal value to be read.</param>
         public LiteralTokenReader(string value)
         {
-            TokenType = value;
+            TokenType = $"Literal({value})";
+            Value = value;
         }
 
         /// <inheritdoc/>
@@ -29,13 +35,13 @@ namespace RecipeIngredientParser.Core.Tokens.Readers
         {
             var value = new StringBuilder();
             
-            foreach (var t in TokenType)
+            foreach (var c in Value)
             {
-                if (context.Buffer.HasNext() && context.Buffer.Peek() == t)
+                if (context.Buffer.HasNext() && context.Buffer.Peek() == c)
                 {
-                    context.Buffer.Consume(t);
+                    context.Buffer.Consume(c);
 
-                    value.Append(t);
+                    value.Append(c);
                 }
                 else
                 {

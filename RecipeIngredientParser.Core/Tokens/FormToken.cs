@@ -5,7 +5,7 @@ namespace RecipeIngredientParser.Core.Tokens
     /// <summary>
     /// Represents a form token.
     /// </summary>
-    public class FormToken : IToken
+    public sealed class FormToken : IToken
     {
         /// <summary>
         /// Gets or sets the form.
