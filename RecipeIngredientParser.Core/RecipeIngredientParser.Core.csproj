@@ -5,7 +5,7 @@
         <Title>Recipe Ingredient Parser</Title>
         <PackageDescription>Provides a parser for recipe ingredients.</PackageDescription>
         <PackageId>RecipeIngredientParser.Core</PackageId>
-        <Version>1.1.0</Version>
+        <Version>2.0.0</Version>
         <Authors>Jed Simson</Authors>
         <PackageTags>recipe ingredient parser</PackageTags>        
         <RepositoryUrl>https://github.com/JedS6391/RecipeIngredientParser</RepositoryUrl> 
