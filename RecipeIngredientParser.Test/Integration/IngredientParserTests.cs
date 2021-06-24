@@ -236,6 +236,36 @@ namespace RecipeIngredientParser.Test.Integration
                     },
                     Metadata = new ParseResult.ParseMetadata()
                 }
+            },
+            new dynamic[]
+            {
+                // Template definition
+                TemplateDefinitions.AmountUnitIngredient,
+                // Raw ingredient
+                "1/4 - 1/3 cup milk",
+                // Expected tokens
+                new[]
+                {
+                    typeof(LiteralToken),
+                    typeof(RangeAmountToken),
+                    typeof(LiteralToken),
+                    typeof(UnitToken),
+                    typeof(LiteralToken),
+                    typeof(IngredientToken),
+                    typeof(LiteralToken)
+                },
+                // Expected parsed ingredient
+                new ParseResult()
+                {
+                    Details = new ParseResult.IngredientDetails()
+                    {
+                        Amount = "1/4-1/3",
+                        Form = null,
+                        Unit = "cup",
+                        Ingredient = "milk"
+                    },
+                    Metadata = new ParseResult.ParseMetadata()
+                }
             }
         };
         

@@ -52,8 +52,9 @@ namespace RecipeIngredientParser.Core.Parser
             {
                 throw new InvalidParserInputException("Input is not able to be parsed.");
             }
-            
+         
             var sanitizedIngredient = Sanitize(ingredient);
+
             var context = new ParserContext(sanitizedIngredient);
 
             return _parserStrategy.TryParseIngredient(context, _templates, out parseResult);

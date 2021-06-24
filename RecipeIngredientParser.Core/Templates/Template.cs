@@ -71,7 +71,7 @@ namespace RecipeIngredientParser.Core.Templates
                     
                     continue;
                 }
-                
+
                 // Not able to read the next token - bail out.
                 tokens = tokensRead;
                     
