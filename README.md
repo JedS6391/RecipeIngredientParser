@@ -3,6 +3,7 @@
 > *A parser for recipe ingredients.*
 
 [![nuget][nuget-image]][nuget-url]
+[![codecov][codecov-image]][codecov-url]
 
 ## About 
 
@@ -51,3 +52,5 @@ dotnet run --project RecipeIngredientParser.Example
 
 [nuget-image]: https://img.shields.io/nuget/v/RecipeIngredientParser.Core?style=flat-square
 [nuget-url]: https://www.nuget.org/packages/RecipeIngredientParser.Core/
+[codecov-image]: https://img.shields.io/codecov/c/github/JedS6391/RecipeIngredientParser?style=flat-square&token=P5A6PMGOBA
+[codecov-url]: https://codecov.io/gh/JedS6391/RecipeIngredientParser
