@@ -1,7 +1,10 @@
-name: Build master branch
+name: CI
 
 on:
   push:
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
@@ -15,7 +18,7 @@ jobs:
     - name: Set up .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '5.0.201'
+        dotnet-version: '5.0.x'
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
@@ -25,6 +28,3 @@ jobs:
 
     - name: Upload code coverage
       uses: codecov/codecov-action@v1
-
-    - name: Push package to Nuget
-      run: dotnet nuget push RecipeIngredientParser.Core/bin/Release/RecipeIngredientParser.Core.*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
