@@ -25,9 +25,11 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         ///     </item>
         ///     <item>
         ///         <description>
-        ///            Token readers:
-        ///                 <see cref="AmountTokenReader"/>, <see cref="UnitTokenReader"/>,
-        ///                 <see cref="FormTokenReader"/>, <see cref="IngredientTokenReader"/>.
+        ///            Token readers: 
+        ///                 <see cref="AmountTokenReader"/>,
+        ///                 <see cref="UnitTokenReader"/>,
+        ///                 <see cref="FormTokenReader"/>,
+        ///                 <see cref="IngredientTokenReader"/>.
         ///         </description>
         ///     </item>
         ///     <item>
@@ -36,9 +38,12 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         ///     <item>
         ///         <description>
         ///             Sanitization rules:
-        ///                <see cref="RemoveExtraneousSpacesRule"/>, <see cref="RangeSubstitutionRule"/>,
-        ///                <see cref="RemoveBracketedTextRule"/>, <see cref="RemoveAlternateIngredientsRule"/>,
-        ///                <see cref="ReplaceUnicodeFractionsRule"/>, <see cref="ConvertToLowerCaseRule"/>.
+        ///                <see cref="RemoveExtraneousSpacesRule"/>,
+        ///                <see cref="RangeSubstitutionRule"/>,
+        ///                <see cref="RemoveBracketedTextRule"/>,
+        ///                <see cref="RemoveAlternateIngredientsRule"/>,
+        ///                <see cref="ReplaceUnicodeFractionsRule"/>,
+        ///                <see cref="ConvertToLowerCaseRule"/>.
         ///         </description>
         ///     </item>
         /// </list>
