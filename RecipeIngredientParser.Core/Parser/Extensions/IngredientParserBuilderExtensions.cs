@@ -13,7 +13,7 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
     public static class IngredientParserBuilderExtensions
     {
         /// <summary>
-        /// Configures an <see cref="IngredientParser.Builder"/> instance with a set of default configurations.
+        /// Configures an <see cref="IngredientParserBuilder"/> instance with a set of default configurations.
         /// </summary>
         /// <remarks>
         /// The configuration applied is as follows:
@@ -48,9 +48,9 @@ namespace RecipeIngredientParser.Core.Parser.Extensions
         ///     </item>
         /// </list>
         /// </remarks>
-        /// <param name="builder">A <see cref="IngredientParser.Builder"/> instance to configure with defaults.</param>
-        /// <returns>A <see cref="IngredientParser.Builder"/> instance with the defaults configured.</returns>
-        public static IngredientParser.Builder WithDefaultConfiguration(this IngredientParser.Builder builder)
+        /// <param name="builder">A <see cref="IngredientParserBuilder"/> instance to configure with defaults.</param>
+        /// <returns>An <see cref="IngredientParserBuilder"/> instance with the defaults configured.</returns>
+        public static IngredientParserBuilder WithDefaultConfiguration(this IngredientParserBuilder builder)
         {
             return builder
                 .WithTemplateDefinitions(TemplateDefinitions.DefaultTemplateDefinitions)

@@ -35,12 +35,10 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         }
         
         /// <inheritdoc/>
-        public bool TryParseIngredient(
-            ParserContext context, 
-            IEnumerable<Template> templates, 
-            out ParseResult parseResult)
+        public ParseResult ParseIngredient(ParserContext context, IEnumerable<Template> templates)
         {
-            var partialMatches = new List<ParseResult.ParseMetadata>();
+            var attemptedTemplates = new List<Template>();
+            var partialMatchResults = new List<ParseResult>();
             
             foreach (var template in templates)
             {
@@ -48,74 +46,45 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                 
                 var result = template.TryReadTokens(context, out var tokens);
 
+                attemptedTemplates.Add(template);
+
                 switch (result)
                 {
                     case TemplateMatchResult.NoMatch:
                         // Always skip non-matches.
                         continue;
+
                     case TemplateMatchResult.PartialMatch:
-                        // Take a note of partial matches, so that we can find
-                        // the best match when no full matches are found
-                        partialMatches.Add(new ParseResult.ParseMetadata()
-                        {
-                            Template = template,
-                            MatchResult = TemplateMatchResult.PartialMatch,
-                            Tokens = tokens.ToList()
-                        });
+                        // Take a note of partial matches, so that we can find the best match when no full matches are found
+                        partialMatchResults.Add(ParseResult.Success(
+                            template,
+                            tokens.ToList(),
+                            TemplateMatchResult.PartialMatch,
+                            attemptedTemplates));
                         
                         continue;
                     
                     case TemplateMatchResult.FullMatch:
-                        // Stop on the first full match
-                        parseResult = new ParseResult()
-                        {
-                            Details = new ParseResult.IngredientDetails(),
-                            Metadata = new ParseResult.ParseMetadata()
-                            {
-                                Template = template,
-                                MatchResult = TemplateMatchResult.FullMatch,
-                                Tokens =  tokens.ToList()
-                            }
-                        };
-
-                        VisitTokens(parseResult);
-                        
-                        return true;
+                        // Stop on the first full match.
+                        return ParseResult.Success(
+                            template,
+                            tokens.ToList(),
+                            TemplateMatchResult.FullMatch,
+                            attemptedTemplates);
                     
                     default:
-                        throw new ArgumentOutOfRangeException(
-                $"Encountered unknown template match result: {result}");
+                        throw new ArgumentOutOfRangeException($"Encountered unknown template match result: {result}");
                 }
             }
             
-            if (partialMatches.Any())
+            if (partialMatchResults.Any())
             {
-                var bestMatchMetadata = _bestMatchHeuristic.Invoke(partialMatches);
+                var bestMatchResult = _bestMatchHeuristic.Invoke(partialMatchResults);
 
-                parseResult = new ParseResult()
-                {
-                    Details = new ParseResult.IngredientDetails(),
-                    Metadata = bestMatchMetadata
-                };
-                
-                VisitTokens(parseResult);
-
-                return true;
+                return bestMatchResult;
             }
 
-            parseResult = null;
-
-            return false;
-        }
-
-        private void VisitTokens(ParseResult parseResult)
-        {
-            var tokenVisitor = new ParserTokenVisitor(parseResult);
-            
-            foreach (var token in parseResult.Metadata.Tokens)
-            {
-                token.Accept(tokenVisitor);
-            }
+            return ParseResult.Fail(attemptedTemplates);
         }
     }
 }

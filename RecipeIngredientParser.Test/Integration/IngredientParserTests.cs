@@ -40,10 +40,9 @@ namespace RecipeIngredientParser.Test.Integration
             string templateDefinition,
             string rawIngredient,
             Type[] expectedTokens,
-            ParseResult expectedParsedResult)
+            IngredientDetails expectedIngredientDetails)
         {
-            var parser = IngredientParser
-                .Builder
+            var parser = IngredientParserBuilder
                 .New
                 .WithTemplateDefinitions(templateDefinition)
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
@@ -56,7 +55,7 @@ namespace RecipeIngredientParser.Test.Integration
             Assert.IsTrue(result);
             Assert.AreEqual(TemplateMatchResult.FullMatch, parseResult.Metadata.MatchResult);
             
-            var tokenList = parseResult.Metadata.Tokens.ToList();
+            var tokenList = parseResult.Metadata.MatchedTokens.ToList();
             
             Assert.AreEqual(expectedTokens.Length, tokenList.Count);
 
@@ -66,10 +65,10 @@ namespace RecipeIngredientParser.Test.Integration
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedResult.Details.Amount, parseResult.Details.Amount);
-            Assert.AreEqual(expectedParsedResult.Details.Unit, parseResult.Details.Unit);
-            Assert.AreEqual(expectedParsedResult.Details.Form, parseResult.Details.Form);
-            Assert.AreEqual(expectedParsedResult.Details.Ingredient, parseResult.Details.Ingredient);
+            Assert.AreEqual(expectedIngredientDetails.Amount, parseResult.Details.Amount);
+            Assert.AreEqual(expectedIngredientDetails.Unit, parseResult.Details.Unit);
+            Assert.AreEqual(expectedIngredientDetails.Form, parseResult.Details.Form);
+            Assert.AreEqual(expectedIngredientDetails.Ingredient, parseResult.Details.Ingredient);
         }
         
         [Test]
@@ -79,10 +78,9 @@ namespace RecipeIngredientParser.Test.Integration
             IParserStrategy parserStrategy,
             string rawIngredient,
             Type[] expectedTokens,
-            ParseResult expectedParsedResult)
+            IngredientDetails expectedIngredientDetails)
         {
-            var parser = IngredientParser
-                .Builder
+            var parser = IngredientParserBuilder
                 .New
                 .WithTemplateDefinitions(templateDefinition)
                 .WithTokenReaderFactory(new TokenReaderFactory(_tokenReaders))
@@ -95,7 +93,7 @@ namespace RecipeIngredientParser.Test.Integration
             Assert.IsTrue(result);
             Assert.AreEqual(TemplateMatchResult.FullMatch, parseResult.Metadata.MatchResult);
             
-            var tokenList = parseResult.Metadata.Tokens.ToList();
+            var tokenList = parseResult.Metadata.MatchedTokens.ToList();
             
             Assert.AreEqual(expectedTokens.Length, tokenList.Count);
 
@@ -105,10 +103,10 @@ namespace RecipeIngredientParser.Test.Integration
             
             CollectionAssert.AreEqual(expectedTokens, tokenTypes);
             
-            Assert.AreEqual(expectedParsedResult.Details.Amount, parseResult.Details.Amount);
-            Assert.AreEqual(expectedParsedResult.Details.Unit, parseResult.Details.Unit);
-            Assert.AreEqual(expectedParsedResult.Details.Form, parseResult.Details.Form);
-            Assert.AreEqual(expectedParsedResult.Details.Ingredient, parseResult.Details.Ingredient);
+            Assert.AreEqual(expectedIngredientDetails.Amount, parseResult.Details.Amount);
+            Assert.AreEqual(expectedIngredientDetails.Unit, parseResult.Details.Unit);
+            Assert.AreEqual(expectedIngredientDetails.Form, parseResult.Details.Form);
+            Assert.AreEqual(expectedIngredientDetails.Ingredient, parseResult.Details.Ingredient);
         }
 
         #region Test case definitions
@@ -133,16 +131,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "1",
-                        Form = null,
-                        Unit = "bag",
-                        Ingredient = "vegan sausages"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "1",
+                    Form = null,
+                    Unit = "bag",
+                    Ingredient = "vegan sausages"
                 }
             },
             new dynamic[]
@@ -163,16 +157,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = null,
-                        Unit = "grams",
-                        Ingredient = "chocolate"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = null,
+                    Unit = "grams",
+                    Ingredient = "chocolate"
                 }
             },
             new dynamic[]
@@ -193,16 +183,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "3",
-                        Form = null,
-                        Unit = "cups",
-                        Ingredient = "cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "3",
+                    Form = null,
+                    Unit = "cups",
+                    Ingredient = "cheese"
                 }
             },
             new dynamic[]
@@ -225,16 +211,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = "grated",
-                        Unit = "cups",
-                        Ingredient = "cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = "grated",
+                    Unit = "cups",
+                    Ingredient = "cheese"
                 }
             },
             new dynamic[]
@@ -255,16 +237,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "1/4-1/3",
-                        Form = null,
-                        Unit = "cup",
-                        Ingredient = "milk"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "1/4-1/3",
+                    Form = null,
+                    Unit = "cup",
+                    Ingredient = "milk"
                 }
             }
         };
@@ -299,16 +277,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = "grated",
-                        Unit = "cups",
-                        Ingredient = "cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = "grated",
+                    Unit = "cups",
+                    Ingredient = "cheese"
                 }
             },
             new dynamic[]
@@ -335,16 +309,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = null,
-                        Unit = "cups",
-                        Ingredient = "grated cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = null,
+                    Unit = "cups",
+                    Ingredient = "grated cheese"
                 }
             },
             
@@ -378,16 +348,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = "grated",
-                        Unit = "cups",
-                        Ingredient = "cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = "grated",
+                    Unit = "cups",
+                    Ingredient = "cheese"
                 }
             },
             new dynamic[]
@@ -416,16 +382,12 @@ namespace RecipeIngredientParser.Test.Integration
                     typeof(LiteralToken)
                 },
                 // Expected parsed ingredient
-                new ParseResult()
+                new IngredientDetails()
                 {
-                    Details = new ParseResult.IngredientDetails()
-                    {
-                        Amount = "2",
-                        Form = "grated",
-                        Unit = "cups",
-                        Ingredient = "cheese"
-                    },
-                    Metadata = new ParseResult.ParseMetadata()
+                    Amount = "2",
+                    Form = "grated",
+                    Unit = "cups",
+                    Ingredient = "cheese"
                 }
             }
             

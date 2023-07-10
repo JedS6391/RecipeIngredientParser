@@ -4,7 +4,6 @@ using System.Linq;
 using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
-using RecipeIngredientParser.Core.Tokens;
 
 namespace RecipeIngredientParser.Core.Parser.Strategy
 {
@@ -37,49 +36,32 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         }
         
         /// <inheritdoc/>
-        public bool TryParseIngredient(
-            ParserContext context,
-            IEnumerable<Template> templates,
-            out ParseResult parseResult)
-        {                  
-            var fullMatches = FindFullMatches(context, templates);
+        public ParseResult ParseIngredient(ParserContext context, IEnumerable<Template> templates)
+        {
+            var (attemptedTemplates, fullMatchResults) = FindFullMatches(context, templates);
 
-            if (fullMatches.Any())
+            if (fullMatchResults.Any())
             {
-                var bestMatchMetadata = _bestMatchHeuristic.Invoke(fullMatches);
-
-                parseResult = new ParseResult()
-                {
-                    Details = new ParseResult.IngredientDetails(),
-                    Metadata = bestMatchMetadata
-                };
-
-                var tokenVisitor = new ParserTokenVisitor(parseResult);
-                
-                foreach (var token in parseResult.Metadata.Tokens)
-                {
-                    token.Accept(tokenVisitor);
-                }
-
-                return true;
+                return _bestMatchHeuristic.Invoke(fullMatchResults);
             }
-            
-            parseResult = null;
 
-            return false;
+            return ParseResult.Fail(attemptedTemplates);
         }
 
-        private List<ParseResult.ParseMetadata> FindFullMatches(
-            ParserContext context, 
+        private (List<Template> attemptedTemplates, List<ParseResult> fullMatchResults) FindFullMatches(
+            ParserContext context,
             IEnumerable<Template> templates)
         {
-            var fullMatches = new List<ParseResult.ParseMetadata>();
+            var attemptedTemplates = new List<Template>();
+            var fullMatchResults = new List<ParseResult>();
             
             foreach (var template in templates)
             {
                 context.Buffer.Reset();
                 
                 var result = template.TryReadTokens(context, out var tokens);
+
+                attemptedTemplates.Add(template);
 
                 switch (result)
                 {
@@ -90,22 +72,20 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                     
                     case TemplateMatchResult.FullMatch:
                         // Keep track of full matches.
-                        fullMatches.Add( new ParseResult.ParseMetadata()
-                        {
-                            Template = template,
-                            MatchResult = TemplateMatchResult.FullMatch,
-                            Tokens =  tokens.ToList()
-                        });
+                        fullMatchResults.Add(ParseResult.Success(
+                            template,
+                            tokens.ToList(),
+                            TemplateMatchResult.FullMatch,
+                            attemptedTemplates));
 
                         continue;
 
                     default:
-                        throw new ArgumentOutOfRangeException(
-                            $"Encountered unknown template match result: {result}");
+                        throw new ArgumentOutOfRangeException($"Encountered unknown template match result: {result}");
                 }
             }
 
-            return fullMatches;
+            return (attemptedTemplates, fullMatchResults);
         }
     }
 }
