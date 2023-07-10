@@ -10,20 +10,11 @@ namespace RecipeIngredientParser.Core.Parser.Strategy.Abstract
     public interface IParserStrategy
     {
         /// <summary>
-        /// Attempts to parse an ingredient from the context based on a set of templates. 
+        /// Attempts to parse an ingredient from the context based on a set of templates.
         /// </summary>
         /// <param name="context">The context to parse an ingredient from.</param>
         /// <param name="templates">A set of templates to attempt parsing with.</param>
-        /// <param name="parseResult">
-        /// When this method returns, contains the result of parsing if the parse operation
-        /// succeeded, or <see langword="null"/> if the parse failed.
-        /// </param>
-        /// <returns>
-        /// <see langword="true"/> if the parsing succeeded; <see langword="false"/> otherwise.
-        /// </returns>
-        bool TryParseIngredient(
-            ParserContext context, 
-            IEnumerable<Template> templates, 
-            out ParseResult parseResult);
+        /// <returns>The result of the parse operation.</returns>
+        ParseResult ParseIngredient(ParserContext context, IEnumerable<Template> templates);
     }
 }

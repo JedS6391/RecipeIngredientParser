@@ -4,7 +4,6 @@ using System.Linq;
 using RecipeIngredientParser.Core.Parser.Context;
 using RecipeIngredientParser.Core.Parser.Strategy.Abstract;
 using RecipeIngredientParser.Core.Templates;
-using RecipeIngredientParser.Core.Tokens;
 
 namespace RecipeIngredientParser.Core.Parser.Strategy
 {
@@ -17,16 +16,17 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
     public class FirstFullMatchParserStrategy : IParserStrategy
     {
         /// <inheritdoc/>
-        public bool TryParseIngredient(
-            ParserContext context, 
-            IEnumerable<Template> templates, 
-            out ParseResult parseResult)
+        public ParseResult ParseIngredient(ParserContext context, IEnumerable<Template> templates)
         {
+            var attemptedTemplates = new List<Template>();
+
             foreach (var template in templates)
             {
                 context.Buffer.Reset();
                 
                 var result = template.TryReadTokens(context, out var tokens);
+
+                attemptedTemplates.Add(template);
 
                 switch (result)
                 {
@@ -36,36 +36,19 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
                         continue;
                     
                     case TemplateMatchResult.FullMatch:
-                        // Stop on the first full match
-                        parseResult = new ParseResult()
-                        {
-                            Details = new ParseResult.IngredientDetails(),
-                            Metadata = new ParseResult.ParseMetadata()
-                            {
-                                Template = template,
-                                MatchResult = TemplateMatchResult.FullMatch,
-                                Tokens =  tokens.ToList()
-                            }
-                        };
-
-                        var tokenVisitor = new ParserTokenVisitor(parseResult);
-
-                        foreach (var token in parseResult.Metadata.Tokens)
-                        {
-                            token.Accept(tokenVisitor);
-                        }
-
-                        return true;
+                        // Stop on the first full match.
+                        return ParseResult.Success(
+                            template,
+                            tokens.ToList(),
+                            TemplateMatchResult.FullMatch,
+                            attemptedTemplates);
                     
                     default:
-                        throw new ArgumentOutOfRangeException(
-                            $"Encountered unknown template match result: {result}");
+                        throw new ArgumentOutOfRangeException($"Encountered unknown template match result: {result}");
                 }
             }
 
-            parseResult = null;
-
-            return false;
+            return ParseResult.Fail(attemptedTemplates);
         }
     }
 }

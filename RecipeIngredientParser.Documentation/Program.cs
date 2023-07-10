@@ -67,8 +67,7 @@ namespace RecipeIngredientParser.Documentation
                 new ConvertToLowerCaseRule()
             };
 
-            var builder = IngredientParser
-                .Builder
+            var builder = IngredientParserBuilder
                 .New
                 .WithTemplateDefinitions(templateDefinitions)
                 .WithTokenReaderFactory(new TokenReaderFactory(tokenReaders))
@@ -353,7 +352,9 @@ namespace RecipeIngredientParser.Documentation
             var strategy = new BestFullMatchParserStrategy(
                 BestMatchHeuristics.WeightedTokenHeuristic(ResolveTokenWeight));
 
-            if (strategy.TryParseIngredient(context, templates, out var parseResult))
+            var parseResult = strategy.ParseIngredient(context, templates);
+
+            if (parseResult.IsSuccess)
             {
                 Console.WriteLine("Parse successful.");
                 Console.WriteLine();

@@ -10,11 +10,10 @@ namespace RecipeIngredientParser.Test.Unit
 {
     public class BestMatchHeuristicTests
     {
-        private static readonly ParseResult.ParseMetadata[] Matches =
+        private static readonly ParseResult[] Results =
         {
-            new ParseResult.ParseMetadata()
-            {
-                Tokens = new IToken[]
+            ParseResult.Success(
+                matchedTokens: new IToken[]
                 {
                     new LiteralToken(),
                     AmountToken.Literal(1m),
@@ -25,12 +24,11 @@ namespace RecipeIngredientParser.Test.Unit
                     new LiteralToken()
                 },
                 // These properties don't matter.
-                MatchResult = TemplateMatchResult.FullMatch,
-                Template = null
-            },
-            new ParseResult.ParseMetadata()
-            {
-                Tokens = new IToken[]
+                matchedTemplate: null,
+                matchResult: TemplateMatchResult.FullMatch,
+                attemptedTemplates: null),
+            ParseResult.Success(
+                matchedTokens: new IToken[]
                 {
                     new LiteralToken(),
                     AmountToken.Literal(1m),
@@ -43,22 +41,21 @@ namespace RecipeIngredientParser.Test.Unit
                     new LiteralToken()
                 },
                 // These properties don't matter.
-                MatchResult = TemplateMatchResult.FullMatch,
-                Template = null
-            }
-        };
+                matchedTemplate: null,
+                matchResult: TemplateMatchResult.FullMatch,
+                attemptedTemplates: null)
+    };
         
         [Test]
-        public void
-            GreatestNumberOfTokensHeuristic_MultipleMatchesWithDifferentNumbersOfTokens_ShouldReturnTheMatchWithTheGreatestNumberOfTokens()
+        public void GreatestNumberOfTokensHeuristic_MultipleMatchesWithDifferentNumbersOfTokens_ShouldReturnTheMatchWithTheGreatestNumberOfTokens()
         {
             var heuristic = BestMatchHeuristics.GreatestNumberOfTokensHeuristic();
             
-            var expectedBestMatch = Matches.Last();
+            var expectedBestResult = Results.Last();
 
-            var bestMatch = heuristic.Invoke(Matches);
+            var bestMatch = heuristic.Invoke(Results);
             
-            Assert.AreEqual(expectedBestMatch, bestMatch);
+            Assert.AreEqual(expectedBestResult, bestMatch);
         }
 
         private static dynamic[][] _weightedTokenHeuristicTestCases =
@@ -66,12 +63,12 @@ namespace RecipeIngredientParser.Test.Unit
             new dynamic[]
             {
                 -2.0m,
-                Matches.First()
+                Results.First()
             },
             new dynamic[]
             {
                 2.0m,
-                Matches.Last()
+                Results.Last()
             }
         };
         
@@ -80,7 +77,7 @@ namespace RecipeIngredientParser.Test.Unit
         public void
             WeightedTokenHeuristic_MultipleMatchesWithDifferentNumbersOfTokens_ShouldReturnTheMatchWithTheGreatestWeightScore(
                 decimal formTokenWeight,
-                ParseResult.ParseMetadata expectedBestMatch)
+                ParseResult expectedBestResult)
         {
             var heuristic = BestMatchHeuristics.WeightedTokenHeuristic(token =>
             {
@@ -107,9 +104,9 @@ namespace RecipeIngredientParser.Test.Unit
                 return 0.0m;
             });
             
-            var bestMatch = heuristic.Invoke(Matches);
+            var bestMatch = heuristic.Invoke(Results);
             
-            Assert.AreEqual(expectedBestMatch, bestMatch);
+            Assert.AreEqual(expectedBestResult, bestMatch);
         }
     }
 }

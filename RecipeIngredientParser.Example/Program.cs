@@ -30,19 +30,19 @@ namespace RecipeIngredientParser.Example
 
                     Console.WriteLine();
                     Console.WriteLine("Matching template:");
-                    Console.WriteLine(parseResult.Metadata.Template.Definition);
+                    Console.WriteLine(parseResult.Metadata.MatchedTemplate.Definition);
                     
                     Console.WriteLine();
                     Console.WriteLine("Tokens:");
                     
-                    foreach (var token in parseResult.Metadata.Tokens)
+                    foreach (var token in parseResult.Metadata.MatchedTokens)
                     {
                         DisplayToken(token);
                     }
 
                     var totalScore = parseResult
                         .Metadata
-                        .Tokens
+                        .MatchedTokens
                         .Sum(t => TokenWeightResolver.Invoke(t));
                     
                     Console.WriteLine($"Total score: {totalScore}");
@@ -67,8 +67,7 @@ namespace RecipeIngredientParser.Example
 
         private static IngredientParser CreateParser()
         {
-            return IngredientParser
-                .Builder
+            return IngredientParserBuilder
                 .New
                 .WithDefaultConfiguration()
                 .WithParserStrategy(new BestFullMatchParserStrategy(

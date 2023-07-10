@@ -17,10 +17,9 @@ namespace RecipeIngredientParser.Test.Integration
         public void IngredientParser_TryReadRealWorldDataIngredients_ShouldSuccessfullyParseIngredient(
             string rawIngredient,
             bool expectedResult,
-            ParseResult.IngredientDetails expectedDetails)
+            IngredientDetails expectedDetails)
         {
-            var parser = IngredientParser
-                .Builder
+            var parser = IngredientParserBuilder
                 .New
                 .WithDefaultConfiguration()
                 .WithParserStrategy(
@@ -90,7 +89,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 Full Recipe Vegan Taco Meat",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = null,
@@ -103,7 +102,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 Tbsp Olive Oil",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "tbsp",
@@ -116,7 +115,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1/2 Onion (Chopped)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/2",
                     Unit = null,
@@ -129,7 +128,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1/4 tsp Cayenne Pepper",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/4",
                     Unit = "tsp",
@@ -142,7 +141,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1/4 tsp Chili Flakes",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/4",
                     Unit = "tsp",
@@ -155,7 +154,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1/2 tsp Cumin",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/2",
                     Unit = "tsp",
@@ -176,7 +175,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "2 Tbsp Water",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "2",
                     Unit = "tbsp",
@@ -189,7 +188,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "Sea Salt and Black Pepper (To Taste)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = null,
                     Unit = null,
@@ -202,7 +201,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 Full Recipe Pico De Gallo",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = null,
@@ -215,7 +214,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 Full Recipe Vegan Nacho Cheese",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = null,
@@ -228,7 +227,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "2 Avocados",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "2",
                     Unit = null,
@@ -241,7 +240,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 Tbsp Fresh Lime Juice",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "tbsp",
@@ -254,7 +253,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "Sea Salt and Black Pepper (To Taste)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = null,
                     Unit = null,
@@ -267,7 +266,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "16oz (450g) Tortilla Chips",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "16",
                     Unit = "oz",
@@ -280,7 +279,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "Fresh Cilantro",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = null,
                     Unit = null,
@@ -297,7 +296,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "2 cups homemade enchilada sauce",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "2",
                     Unit = "cups",
@@ -310,7 +309,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "2 tablespoons olive oil",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "2",
                     Unit = "tablespoons",
@@ -323,7 +322,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 cup chopped red onion (about 1 small red onion)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "cup",
@@ -336,7 +335,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 red bell pepper, chopped",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = null,
@@ -349,7 +348,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 bunch of broccoli or 1 small head of cauliflower (about 1 pound), florets removed and sliced into small, bite-sized pieces",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "bunch",
@@ -362,7 +361,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 teaspoon Frontier Co-op Ground Cumin",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "teaspoon",
@@ -375,7 +374,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "¼ teaspoon Frontier Co-op Ground Cinnamon",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/4",
                     Unit = "teaspoon",
@@ -388,7 +387,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "5 to 6 ounces baby spinach (about 5 cups, packed)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "5-6",
                     Unit = "ounces",
@@ -401,7 +400,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 can (15 ounces) black beans, drained and rinsed, or 1 ½ cups cooked black beans",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "can",
@@ -414,7 +413,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "1 cup shredded Monterey Jack cheese, divided",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1",
                     Unit = "cup",
@@ -427,7 +426,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "½ teaspoon salt, to taste",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "1/2",
                     Unit = "teaspoon",
@@ -440,7 +439,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "Freshly ground black pepper, to taste",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = null,
                     Unit = null,
@@ -453,7 +452,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "8 whole wheat tortillas (about 8” in diameter)",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = "8",
                     Unit = null,
@@ -466,7 +465,7 @@ namespace RecipeIngredientParser.Test.Integration
                 "Handful of chopped cilantro, for garnishing",
                 // Successful?
                 true,
-                new ParseResult.IngredientDetails()
+                new IngredientDetails()
                 {
                     Amount = null,
                     Unit = "handful",

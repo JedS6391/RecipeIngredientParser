@@ -6,11 +6,10 @@ using RecipeIngredientParser.Core.Tokens.Abstract;
 namespace RecipeIngredientParser.Core.Parser.Strategy
 {
     /// <summary>
-    /// Defines a delegate that can take a collection of parse metadata for template matches and extract
-    /// the 'best' match.
+    /// Defines a delegate that can take a collection of parse results and extract the 'best' match.
     /// </summary>
-    /// <param name="matches">A collection of parse metadata for template matches.</param>
-    public delegate ParseResult.ParseMetadata BestMatchHeuristic(IEnumerable<ParseResult.ParseMetadata> matches);
+    /// <param name="results">A collection of parse results.</param>
+    public delegate ParseResult BestMatchHeuristic(IEnumerable<ParseResult> results);
 
     /// <summary>
     /// Defines a set of <see cref="BestMatchHeuristic"/>.
@@ -18,13 +17,13 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
     public static class BestMatchHeuristics
     {
         /// <summary>
-        /// A heuristic that will extract the match that has the greatest number of tokens.
+        /// A heuristic that will extract the result that has the greatest number of tokens.
         /// </summary>
-        /// <returns>The match with the greatest number of tokens.</returns>
+        /// <returns>The result with the greatest number of tokens.</returns>
         public static BestMatchHeuristic GreatestNumberOfTokensHeuristic() => 
-            matches => 
-                matches
-                    .OrderByDescending(m => m.Tokens.Count())
+            results =>
+                results
+                    .OrderByDescending(r => r.Metadata.MatchedTokens.Count())
                     .First();
 
         /// <summary>
@@ -33,23 +32,24 @@ namespace RecipeIngredientParser.Core.Parser.Strategy
         /// <param name="tokenWeightResolver">A function that can be used to get the weight for a given token.</param>
         /// <returns>The match with the greatest weight score.</returns>
         public static BestMatchHeuristic WeightedTokenHeuristic(Func<IToken, decimal> tokenWeightResolver) =>
-            matches =>
+            results =>
             {
-                var matchesWithSummedWeights = new List<(ParseResult.ParseMetadata Match, decimal SummedWeights)>();
+                var resultsWithSummedWeights = new List<(ParseResult Result, decimal SummedWeights)>();
                 
-                foreach (var match in matches)
+                foreach (var result in results)
                 {
-                    var summedWeights = match
-                        .Tokens
+                    var summedWeights = result
+                        .Metadata
+                        .MatchedTokens
                         .Sum(tokenWeightResolver);
                     
-                    matchesWithSummedWeights.Add((match, summedWeights));
+                    resultsWithSummedWeights.Add((result, summedWeights));
                 }
                 
-                return matchesWithSummedWeights
+                return resultsWithSummedWeights
                     .OrderByDescending(t => t.SummedWeights)
                     .First()
-                    .Match;
+                    .Result;
             };
     } 
 }
